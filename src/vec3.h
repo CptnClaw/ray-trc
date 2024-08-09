@@ -7,7 +7,7 @@
 class Vec3
 {
     public:
-        Vec3();
+        Vec3(); // (0,0,0)
         Vec3(double x, double y, double z);
         
         double norm() const; // AKA length
@@ -26,6 +26,9 @@ class Vec3
         Vec3& operator+=(const Vec3 &w); // vector addition
         Vec3& operator*=(double t); // multiplication by scalar
         Vec3& operator/=(double t); // division by scalar
+        
+        // Return a rounded instance of this vector
+        Vec3 round() const;
 
     private:
         double values[3];
@@ -35,10 +38,14 @@ class Vec3
 // Vector space operations (binary)
 Vec3 operator+(const Vec3 &v, const Vec3 &w);
 Vec3 operator-(const Vec3 &v, const Vec3 &w);
+Vec3 operator/(const Vec3 &v, double t);
 Vec3 operator*(const Vec3 &v, double t);
 Vec3 operator*(double t, const Vec3 &v);
 double dot(const Vec3 &v, const Vec3 &w);
 Vec3 cross(const Vec3 &v, const Vec3 &w);
+
+// Get a unit vector in the same direction
+Vec3 unit(const Vec3 &v);
 
 // Serializer
 std::ostream& operator<<(std::ostream &out, const Vec3 &v);

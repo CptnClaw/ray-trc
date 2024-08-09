@@ -2,10 +2,8 @@
 #define _IMAGE_H_
 
 #include <iostream>
+#include "viewport.h"
 
-#define DISPLAY_WIDTH 256
-#define DISPLAY_HEIGHT 256
-
-void draw_example(std::ostream &out);
+void draw_example(std::ostream &out, const Viewport &view);
 
 #endif // _IMAGE_H_

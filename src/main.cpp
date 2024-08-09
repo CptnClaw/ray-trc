@@ -1,6 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include "image.h"
+#include "viewport.h"
+
+#define SCREEN_WIDTH 800
 
 int main(int argc, char **argv)
 {
@@ -13,6 +16,7 @@ int main(int argc, char **argv)
         std::cerr << "Error: Cannot open file for writing" << std::endl;
         return 1;
     }
-    draw_example(outfile);
+    Viewport view(SCREEN_WIDTH);
+    draw_example(outfile, view);
     return 0;
 }

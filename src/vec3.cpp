@@ -25,6 +25,13 @@ double Vec3::z() const    {return values[2];}
 double Vec3::operator[](int i) const    {return values[i];}
 double &Vec3::operator[](int i)         {return values[i];}
 
+Vec3 Vec3::round() const
+{
+    return Vec3(double(int(values[0])),
+                double(int(values[1])),
+                double(int(values[2])));
+}
+
 Vec3 Vec3::operator-() const
 {
     return Vec3(-values[0], -values[1], -values[2]);
@@ -63,6 +70,11 @@ Vec3 operator-(const Vec3 &v, const Vec3 &w)
     return Vec3(v[0]-w[0], v[1]-w[1], v[2]-w[2]);
 }
 
+Vec3 operator/(const Vec3 &v, double t)
+{
+    return v*(1/t);
+}
+
 Vec3 operator*(const Vec3 &v, double t)
 {
     return Vec3(v[0]*t, v[1]*t, v[2]*t);
@@ -83,6 +95,13 @@ Vec3 cross(const Vec3 &v, const Vec3 &w)
     return Vec3(v[1]*w[2] - v[2]*w[1],
                 v[2]*w[0] - v[0]*w[2],
                 v[0]*w[1] - v[1]*w[0]);
+}
+
+Vec3 unit(const Vec3 &v)
+{
+    Vec3 u(v[0], v[1], v[2]);
+    u.normalize();
+    return u;
 }
 
 std::ostream &operator<<(std::ostream &out, const Vec3 &v)
