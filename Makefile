@@ -1,6 +1,6 @@
 CC=clang++
 CSTD=-std=c++23
-SOURCE=src/main.cpp src/image.cpp 
+SOURCE=src/main.cpp src/image.cpp  src/vec3.cpp
 OUTPUT=ray-trc
 DEBUG=-g3 -O0
 

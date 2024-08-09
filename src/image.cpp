@@ -1,5 +1,6 @@
 #include <iostream>
 #include "image.h"
+#include "vec3.h"
 
 #define MAX_COLOR 255
 
@@ -13,19 +14,18 @@ void draw_example(std::ostream &out)
     // Write pixels
     for (int y = 0; y < DISPLAY_HEIGHT; y++)
     {
+        // Print progress bar
+        std::clog << (DISPLAY_HEIGHT - y) << " scanlines remaining" << std::endl;
+
         for (int x = 0; x < DISPLAY_WIDTH; x++)
         {
-            double r = double(x) / (DISPLAY_WIDTH - 1);
-            double g = double(y) / (DISPLAY_HEIGHT - 1);
-            double b = 0;
+            double r = 0;
+            double g = double(x) / (DISPLAY_WIDTH - 1);
+            double b = double(y) / (DISPLAY_HEIGHT - 1);
 
-            int ir = int(r * MAX_COLOR);
-            int ig = int(g * MAX_COLOR);
-            int ib = int(b * MAX_COLOR);
-            
-            out << ir << " ";
-            out << ig << " ";
-            out << ib << std::endl;
+            Color pixel(r,g,b);
+            pixel *= MAX_COLOR;
+            out << pixel << std::endl;
         }
     }
 }
