@@ -1,12 +1,13 @@
 CC=clang++
 CSTD=-std=c++23
-SOURCE=src/main.cpp src/image.cpp  src/vec3.cpp
+WARN=-Wall -Wextra -Wpedantic -Werror
+SOURCE=src/main.cpp src/image.cpp src/vec3.cpp src/ray.cpp
 OUTPUT=ray-trc
 DEBUG=-g3 -O0
 
 build: 
-	$(CC) $(SOURCE) $(CSTD) -o $(OUTPUT)
+	$(CC) $(WARN) $(SOURCE) $(CSTD) -o $(OUTPUT)
 debug: 
-	$(CC) $(SOURCE) $(DEBUG) $(CSTD) -o $(OUTPUT)
+	$(CC) $(WARN) $(SOURCE) $(DEBUG) $(CSTD) -o $(OUTPUT)
 clean:
 	rm -rf $(OUTPUT)

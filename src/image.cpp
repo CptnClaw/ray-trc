@@ -28,4 +28,5 @@ void draw_example(std::ostream &out)
             out << pixel << std::endl;
         }
     }
+    std::clog << "Done" << std::endl;
 }

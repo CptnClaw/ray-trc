@@ -4,6 +4,9 @@
 
 int main(int argc, char **argv)
 {
+    (void)argc; // Mark as unused
+    (void)argv; // Mark as unused
+
     std::ofstream outfile("orot.ppm");
     if (!outfile)
     {
