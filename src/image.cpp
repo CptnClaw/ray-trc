@@ -1,10 +1,11 @@
+#include <assert.h>
 #include <iostream>
 #include "image.h"
 #include "vec3.h"
 
 #define MAX_COLOR 255
 
-bool is_coliding_sphere(const Ray &ray)
+bool is_coliding_sphere(const Ray &ray, Vec3 &sphere_normal)
 {
     // Defining the sphere geometry
     Point sphere_center(0, 0, -2);
@@ -14,14 +15,27 @@ bool is_coliding_sphere(const Ray &ray)
     double a = ray.direction().norm2();
     double b = -2 * dot(ray.direction(), sphere_center - ray.origin());
     double c = (sphere_center - ray.origin()).norm2() - sphere_radius * sphere_radius;
-    return b*b - 4 * a * c >= 0;
+    double discriminant = b*b - 4*a*c;
+    if (discriminant < 0)
+    {
+        return false;
+    }
+    
+    // Collision was found, now calculate normal of (first) hit point
+    double hit_t = (-b - std::sqrt(discriminant)) / (2*a);
+    assert(hit_t >= 0);
+    Vec3 first_hit = ray.at(hit_t) - sphere_center;
+    sphere_normal = first_hit / sphere_radius;
+    return true;
 }
 
 Color calc_color(const Ray &ray)
 {
-    if (is_coliding_sphere(ray))
+    Vec3 sphere_normal;
+    if (is_coliding_sphere(ray, sphere_normal))
     {
-        return Color(1, 0, 0) * MAX_COLOR;
+        Color normal_color = (sphere_normal + Vec3(1,1,1)) / 2; // Convert coords from [-1, 1] to [0, 1]
+        return normal_color * MAX_COLOR;
     }
     Vec3 unit_dir = unit(ray.direction());
     double interp = (unit_dir.y() + 1.0) / 2; // Convert y from [-1, 1] to [0, 1]
