@@ -11,7 +11,7 @@ class Ray
         const Point &origin() const;
         const Vec3 &direction() const;
         
-        const Vec3 at(double t);
+        Vec3 at(double t) const;
 
     private:
         Point orig;

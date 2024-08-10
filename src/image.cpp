@@ -4,8 +4,25 @@
 
 #define MAX_COLOR 255
 
-Color calc_color(Ray &ray)
+bool is_coliding_sphere(const Ray &ray)
 {
+    // Defining the sphere geometry
+    Point sphere_center(0, 0, -2);
+    double sphere_radius = 0.9;
+    
+    // Quadratic data
+    double a = ray.direction().norm2();
+    double b = -2 * dot(ray.direction(), sphere_center - ray.origin());
+    double c = (sphere_center - ray.origin()).norm2() - sphere_radius * sphere_radius;
+    return b*b - 4 * a * c >= 0;
+}
+
+Color calc_color(const Ray &ray)
+{
+    if (is_coliding_sphere(ray))
+    {
+        return Color(1, 0, 0) * MAX_COLOR;
+    }
     Vec3 unit_dir = unit(ray.direction());
     double interp = (unit_dir.y() + 1.0) / 2; // Convert y from [-1, 1] to [0, 1]
     Color blue(0.1, 0.3, 1.0);

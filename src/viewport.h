@@ -20,8 +20,8 @@ class Viewport
         int screen_height;
 
     private:
-        int viewport_width;
-        int viewport_height;
+        double viewport_width;
+        double viewport_height;
         
         // Origin of rays
         Point camera_center;

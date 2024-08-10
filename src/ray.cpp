@@ -5,7 +5,7 @@ Ray::Ray(const Point &origin, const Vec3 &direction) : orig(origin), dir(directi
 const Point &Ray::origin() const { return orig; }
 const Vec3 &Ray::direction() const { return dir; }
 
-const Vec3 Ray::at(double t)
+Vec3 Ray::at(double t) const
 {
     return orig + t * dir; 
 }
