@@ -3,7 +3,22 @@
 
 #include <iostream>
 #include "viewport.h"
+#include "tracer.h"
 
-void draw_example(std::ostream &out, const Viewport &view);
+class Image
+{
+    public:
+        Image(const std::string &filename, Tracer *tracer, Viewport *view);
+
+        // Returns false is there as an error opening the file
+        bool render() const;
+        
+    private:
+        std::string filename;
+        Tracer *tracer;
+        Viewport *view;
+        int width;
+        int height;
+};
 
 #endif // _IMAGE_H_

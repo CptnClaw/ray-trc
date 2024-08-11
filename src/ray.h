@@ -6,6 +6,7 @@
 class Ray
 {
     public:
+        Ray() = default; // Null ray, usually better to call the next constructor
         Ray(const Point &origin, const Vec3 &direction);
         
         const Point &origin() const;
@@ -16,7 +17,6 @@ class Ray
     private:
         Point orig;
         Vec3 dir;
-
 };
 
 #endif // RAY_H_
