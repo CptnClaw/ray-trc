@@ -1,9 +1,12 @@
 #include "tracer.h"
 #include "sphere.h"
 
+#define MAX_T 1000
+
 Tracer::Tracer()
 {
     objs.push_back(new Sphere(Point(0, 0, -2), 0.9));
+    objs.push_back(new Sphere(Point(0.7, 0, -1.4), 0.3));
 }
 
 Tracer::~Tracer()
@@ -16,10 +19,20 @@ Tracer::~Tracer()
 
 Color Tracer::calc_color(const Ray &ray)
 {
-    Sphere sphere(Point(0, 0, -2), 0.9);
-    if (sphere.hit(ray, 0, 1000))
+    Hittable *closest_obj = NULL;
+    double closest_t = MAX_T;
+    for (Hittable *obj : objs)
     {
-        Color normal_color = sphere.calc_normal();
+        if (obj->hit(ray, 0, MAX_T) &&
+            obj->last_hit_t < closest_t)
+        {
+            closest_t = obj->last_hit_t;
+            closest_obj = obj;
+        }
+    }
+    if (closest_obj != NULL)
+    {
+        Color normal_color = closest_obj->calc_normal();
         normal_color = (normal_color + Vec3(1,1,1)) / 2; // Convert coords from [-1, 1] to [0, 1]
         return normal_color;
     }

@@ -17,10 +17,11 @@ class Hittable
         // Only call this function AFTER calling hit, and having checked that it returned true!
         // Otherwise it will return garbage. This is the caller's responsibility.
         virtual Vec3 calc_normal() = 0;
+
+        double last_hit_t;
         
     protected:
         Ray last_hit_ray;
-        double last_hit_t;
 };
 
 #endif // _HITTABLE_H_
