@@ -2,7 +2,7 @@
 #include "image.h"
 #include "viewport.h"
 
-#define SCREEN_WIDTH 800
+#define SCREEN_WIDTH 400
 
 int main(int argc, char **argv)
 {
