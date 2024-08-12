@@ -12,6 +12,7 @@ int main(int argc, char **argv)
     Tracer tracer;
     Viewport view(SCREEN_WIDTH);
     Image image("orot.ppm", &tracer, &view);
+
     bool result = image.render();
     return result ? 0 : 1;
 }

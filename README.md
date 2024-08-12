@@ -1,5 +1,5 @@
 # ray-trc
-Ray tracer built over several weekends
+Ray tracer built over several weekends.
 
 ### Current progress
 ![Progress thus far](https://raw.githubusercontent.com/CptnClaw/ray-trc/master/orot.png)
