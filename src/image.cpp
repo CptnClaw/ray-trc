@@ -7,11 +7,23 @@
 #include "random.h"
 
 #define MAX_COLOR 255
+#define GAMMA 2.2
 #define SAMPLES_PER_PIXEL 100
 #define RAY_BOUNCE_LIMIT 50
 
 Image::Image(const std::string &filename, Tracer *tracer, Viewport *view) : 
         filename(filename), tracer(tracer), view(view), width(view->screen_width), height(view->screen_height) {}
+        
+// Gamma correction
+Color linear_to_gamma(Color linear_color)
+{
+    Color gamma_color;
+    for (int i=0; i<3; i++)
+    {
+        gamma_color[i] = std::pow(linear_color[i], 1.0 / GAMMA);
+    }
+    return gamma_color;
+}
 
 bool Image::render()
 {
@@ -46,10 +58,11 @@ bool Image::render()
                 double offset_v = random.gen_uniform(-0.5, 0.5);
                 Ray ray = view->get_ray(x + offset_h, y + offset_v);
                 Color cur_color = tracer->calc_color(ray, RAY_BOUNCE_LIMIT);
-                cur_color.clamp(0, 1);
                 color += cur_color;
             }
             color /= SAMPLES_PER_PIXEL; // Average samples
+            color.clamp(0, 1);
+            color = linear_to_gamma(color); // Gamma correction
             out << (color * MAX_COLOR).round() << std::endl;
         }
     }

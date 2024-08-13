@@ -6,10 +6,11 @@
 
 const double MIN_T=0.001; // Avoid fake collisions at very low t that come from floating point rounding errors
 const double MAX_T=std::numeric_limits<double>::infinity();
+const double BOUNCE_ABSORPTION=0.60;
   
 using std::make_shared;
 
-Tracer::Tracer()
+Tracer::Tracer(DiffuseModel diffuse) : diffuse(diffuse)
 {
     // Ground
     objs.push_back(make_shared<Sphere>(Point(0, -101, -2), 100));
@@ -54,16 +55,31 @@ Color Tracer::calc_color(const Ray &ray, int max_depth)
             Color normal_color(0, 0, 0);// = (closest_hit.normal + Vec3(1,1,1)) / 2; // Convert coords from [-1, 1] to [0, 1]
             
             // Random ray bounce
-            Vec3 random_dir = rand.gen_uniform_unit_vec();
-            if (dot(random_dir, closest_hit.normal) < 0)
+            Vec3 random_dir;
+            if (diffuse == DiffuseModel::Uniform)
             {
-                // Make sure random bounce goes outside of the object (and not inside)
-                random_dir = -random_dir;
+                // Distribution is uniform on the hemisphere above the surface
+                random_dir = rand.gen_uniform_unit_vec();
+                if (dot(random_dir, closest_hit.normal) < 0)
+                {
+                    // Make sure random bounce goes outside of the object (and not inside)
+                    random_dir = -random_dir;
+                }
             }
+            else if (diffuse == DiffuseModel::Lambertian)
+            {
+                // Distribution lies more heavily near the surface normal
+                random_dir = closest_hit.normal + rand.gen_uniform_unit_vec();
+            }
+            else
+            {
+                std::cerr << "Invalid diffuse model" << std::endl;
+                return Color(0, 0, 0);
+            }
+
             Ray random_ray(closest_hit.hit_point, random_dir);
             Color bounce_color = calc_color(random_ray, max_depth-1);
-
-            return normal_color + 0.5 * bounce_color;
+            return normal_color + (1 - BOUNCE_ABSORPTION) * bounce_color;
         }
         // Ray is hitting the object from the inside
         return Color(0, 0, 0);
@@ -72,7 +88,7 @@ Color Tracer::calc_color(const Ray &ray, int max_depth)
     // Not hit -- use background color
     Vec3 unit_dir = unit(ray.direction());
     double interp = (unit_dir.y() + 1.0) / 2; // Convert y from [-1, 1] to [0, 1]
-    Color blue(0.5, 0.7, 1.0);
+    Color blue(0.1, 0.3, 1.0);
     Color white(1.0, 1.0, 1.0);
     Color blend = (1-interp) * white + interp * blue; // Lerp
     return blend;

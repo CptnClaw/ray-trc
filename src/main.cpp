@@ -9,7 +9,7 @@ int main(int argc, char **argv)
     (void)argc; // Mark as unused
     (void)argv; // Mark as unused
 
-    Tracer tracer;
+    Tracer tracer(DiffuseModel::Lambertian);
     Viewport view(SCREEN_WIDTH);
     Image image("orot.ppm", &tracer, &view);
 
