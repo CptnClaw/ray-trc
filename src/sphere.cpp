@@ -6,7 +6,7 @@ Sphere::Sphere(const Point &center, double radius)
     this->radius = radius;
 }
 
-bool Sphere::hit(const Ray &ray, double tmin, double tmax)
+bool Sphere::hit(const Ray &ray, double tmin, double tmax, HitData &result)
 {
     // Quadratic data
     // TODO: There is an easy way to optimize the calculations below.
@@ -20,30 +20,23 @@ bool Sphere::hit(const Ray &ray, double tmin, double tmax)
         return false;
     }
     
-    // Collision exists, now find its time and check if it falls in range
+    // Collision exists
+    // Find its time and check if it falls in range
     double sqrt_discr = std::sqrt(discriminant);
     double hit_t = (-b - sqrt_discr) / (2*a);
-    if (tmin <= hit_t && hit_t <= tmax)
+    if (hit_t < tmin || tmax < hit_t)
     {
-        this->last_hit_ray = ray;
-        this->last_hit_t = hit_t;
-        return true;
+        hit_t = (-b + sqrt_discr) / (2*a);
+        if (hit_t < tmin || tmax < hit_t)
+        {
+            return false;
+        }
     }
-
-    hit_t = (-b + sqrt_discr) / (2*a);
-    if (tmin <= hit_t && hit_t <= tmax)
-    {
-        this->last_hit_ray = ray;
-        this->last_hit_t = hit_t;
-        return true;
-    }
-    
-    return false;
+    result.hitter = ray;
+    result.hit_time = hit_t;
+    result.hit_point = ray.at(hit_t);
+    result.normal = (result.hit_point - center) / radius;
+    return true;
 }
 
-Vec3 Sphere::calc_normal()
-{
-    Vec3 first_hit = last_hit_ray.at(last_hit_t) - center;
-    return first_hit / radius;
-}
     

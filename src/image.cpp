@@ -7,13 +7,13 @@
 #include "random.h"
 
 #define MAX_COLOR 255
-
-#define SAMPLES_PER_PIXEL 20
+#define SAMPLES_PER_PIXEL 100
+#define RAY_BOUNCE_LIMIT 50
 
 Image::Image(const std::string &filename, Tracer *tracer, Viewport *view) : 
         filename(filename), tracer(tracer), view(view), width(view->screen_width), height(view->screen_height) {}
 
-bool Image::render() const
+bool Image::render()
 {
     // Open file
     std::ofstream out(filename);
@@ -42,10 +42,12 @@ bool Image::render() const
             Color color; // Start with (0, 0, 0) and accumulate samples
             for (int s = 0; s < SAMPLES_PER_PIXEL; s++)
             {
-                double offset_h = Random::get_rand(-0.5, 0.5);
-                double offset_v = Random::get_rand(-0.5, 0.5);
+                double offset_h = random.gen_uniform(-0.5, 0.5);
+                double offset_v = random.gen_uniform(-0.5, 0.5);
                 Ray ray = view->get_ray(x + offset_h, y + offset_v);
-                color += tracer->calc_color(ray);
+                Color cur_color = tracer->calc_color(ray, RAY_BOUNCE_LIMIT);
+                cur_color.clamp(0, 1);
+                color += cur_color;
             }
             color /= SAMPLES_PER_PIXEL; // Average samples
             out << (color * MAX_COLOR).round() << std::endl;

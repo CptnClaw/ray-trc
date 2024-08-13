@@ -1,48 +1,78 @@
+#include <iostream>
 #include <limits>
 #include "tracer.h"
 #include "sphere.h"
 #include "vec3.h"
 
+const double MIN_T=0.001; // Avoid fake collisions at very low t that come from floating point rounding errors
 const double MAX_T=std::numeric_limits<double>::infinity();
   
 using std::make_shared;
 
 Tracer::Tracer()
 {
-    objs.push_back(make_shared<Sphere>(Point(0, 0, -2), 0.9));
-    objs.push_back(make_shared<Sphere>(Point(0.7, 0, -1.4), 0.3));
+    // Ground
+    objs.push_back(make_shared<Sphere>(Point(0, -101, -2), 100));
+
+    // Three spheres
+    double radius1 = 1;
+    double radius2 = 0.25;
+    double radius3 = 0.125;
+    Point center1 = Point(-0.8, 0, -2);
+    Point center2 = center1 + unit(Point(1, 1, 1)) * (radius1 + radius2);
+    Point center3 = center2 + unit(Point(2, 1, 2)) * (radius2 + radius3);
+    objs.push_back(make_shared<Sphere>(center1, radius1));
+    objs.push_back(make_shared<Sphere>(center2, radius2));
+    objs.push_back(make_shared<Sphere>(center3, radius3));
 }
 
-Color Tracer::calc_color(const Ray &ray)
+Color Tracer::calc_color(const Ray &ray, int max_depth)
 {
-    shared_ptr<Hittable> closest_obj = nullptr;
-    double closest_t = MAX_T;
+    if (max_depth <= 0)
+    {
+        return Color(0, 0, 0);
+    }
+
+    HitData closest_hit;
+    closest_hit.hit_time = MAX_T;
+    
     for (shared_ptr<Hittable> obj : objs)
     {
-        if (obj->hit(ray, 0, MAX_T) &&
-            obj->last_hit_t < closest_t)
+        HitData hd;
+        if (obj->hit(ray, MIN_T, MAX_T, hd) &&
+            hd.hit_time < closest_hit.hit_time)
         {
-            closest_t = obj->last_hit_t;
-            closest_obj = obj;
+            closest_hit = hd;
         }
     }
-    if (closest_obj != nullptr)
+
+    if (closest_hit.hit_time < MAX_T)
     {
-        Vec3 normal = closest_obj->calc_normal();
-        if (dot(normal, ray.direction()) <= 0)
+        if (dot(closest_hit.normal, ray.direction()) <= 0)
         {
-            // Ray is coming from outside the object
-            Color normal_color = (normal + Vec3(1,1,1)) / 2; // Convert coords from [-1, 1] to [0, 1]
-            return normal_color;
+            // Ray is hitting the object from the outside
+            Color normal_color(0, 0, 0);// = (closest_hit.normal + Vec3(1,1,1)) / 2; // Convert coords from [-1, 1] to [0, 1]
+            
+            // Random ray bounce
+            Vec3 random_dir = rand.gen_uniform_unit_vec();
+            if (dot(random_dir, closest_hit.normal) < 0)
+            {
+                // Make sure random bounce goes outside of the object (and not inside)
+                random_dir = -random_dir;
+            }
+            Ray random_ray(closest_hit.hit_point, random_dir);
+            Color bounce_color = calc_color(random_ray, max_depth-1);
+
+            return normal_color + 0.5 * bounce_color;
         }
-        // Ray is coming from inside to object
+        // Ray is hitting the object from the inside
         return Color(0, 0, 0);
     }
 
     // Not hit -- use background color
     Vec3 unit_dir = unit(ray.direction());
     double interp = (unit_dir.y() + 1.0) / 2; // Convert y from [-1, 1] to [0, 1]
-    Color blue(0.1, 0.3, 1.0);
+    Color blue(0.5, 0.7, 1.0);
     Color white(1.0, 1.0, 1.0);
     Color blend = (1-interp) * white + interp * blue; // Lerp
     return blend;

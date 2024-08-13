@@ -8,14 +8,10 @@ class Sphere : public Hittable
     public:
         Sphere(const Point &center, double radius);
 
-        // Check if ray hits the sphere at time tmin<=t<=tmax.
-        bool hit(const Ray &ray, double tmin, double tmax) override;
+        // Check if ray hits the sphere at time tmin<=t<=tmax,
+        // and if so, return true and update last argument.
+        bool hit(const Ray &ray, double tmin, double tmax, HitData &result) override;
 
-        // Calculates the normal of the sphere at the hit point.
-        // Only call this function AFTER calling hit, and having checked that it returned true!
-        // Otherwise it will return garbage. This is the caller's responsibility.
-        Vec3 calc_normal() override;
-    
     private:
         Point center;
         double radius;

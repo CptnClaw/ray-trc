@@ -29,6 +29,9 @@ class Vec3
         
         // Return a rounded instance of this vector
         Vec3 round() const;
+        
+        // Clamp all coordinates between min and max
+        void clamp(double min, double max);
 
     private:
         double values[3];

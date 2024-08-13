@@ -32,6 +32,16 @@ Vec3 Vec3::round() const
                 double(int(values[2])));
 }
 
+void Vec3::clamp(double min, double max)
+{
+    values[0] = std::max(values[0], min);
+    values[0] = std::min(values[0], max);
+    values[1] = std::max(values[1], min);
+    values[1] = std::min(values[1], max);
+    values[2] = std::max(values[2], min);
+    values[2] = std::min(values[2], max);
+}
+
 Vec3 Vec3::operator-() const
 {
     return Vec3(-values[0], -values[1], -values[2]);

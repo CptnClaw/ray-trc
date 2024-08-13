@@ -6,6 +6,7 @@
 #include "vec3.h"
 #include "ray.h"
 #include "hittable.h"
+#include "random.h"
 
 using std::shared_ptr;
 
@@ -13,9 +14,10 @@ class Tracer
 {
     public:
         Tracer();
-        Color calc_color(const Ray &ray);
+        Color calc_color(const Ray &ray, int max_depth);
     private:
         std::vector<shared_ptr<Hittable>> objs;
+        Random rand;
 };
 
 #endif // _TRACER_H_ 

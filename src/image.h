@@ -4,6 +4,7 @@
 #include <iostream>
 #include "viewport.h"
 #include "tracer.h"
+#include "random.h"
 
 class Image
 {
@@ -11,7 +12,7 @@ class Image
         Image(const std::string &filename, Tracer *tracer, Viewport *view);
 
         // Returns false is there as an error opening the file
-        bool render() const;
+        bool render();
         
     private:
         std::string filename;
@@ -19,6 +20,7 @@ class Image
         Viewport *view;
         int width;
         int height;
+        Random random;
 };
 
 #endif // _IMAGE_H_
