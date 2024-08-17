@@ -1,9 +1,13 @@
+#include <memory>
 #include "sphere.h"
+#include "material.h"
 
-Sphere::Sphere(const Point &center, double radius)
+using std::shared_ptr;
+
+Sphere::Sphere(const Point &center, double radius, shared_ptr<Material> material)
+                : center(center), radius(radius)
 {
-    this->center = center;
-    this->radius = radius;
+    this->material = material;
 }
 
 bool Sphere::hit(const Ray &ray, double tmin, double tmax, HitData &result)
@@ -36,6 +40,7 @@ bool Sphere::hit(const Ray &ray, double tmin, double tmax, HitData &result)
     result.hit_time = hit_t;
     result.hit_point = ray.at(hit_t);
     result.normal = (result.hit_point - center) / radius;
+    result.material = material;
     return true;
 }
 

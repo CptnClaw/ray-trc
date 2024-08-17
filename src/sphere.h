@@ -6,7 +6,7 @@
 class Sphere : public Hittable
 {
     public:
-        Sphere(const Point &center, double radius);
+        Sphere(const Point &center, double radius, shared_ptr<Material> material);
 
         // Check if ray hits the sphere at time tmin<=t<=tmax,
         // and if so, return true and update last argument.

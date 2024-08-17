@@ -1,3 +1,4 @@
+#include <math.h>
 #include "vec3.h"
 
 // Class methods
@@ -40,6 +41,14 @@ void Vec3::clamp(double min, double max)
     values[1] = std::min(values[1], max);
     values[2] = std::max(values[2], min);
     values[2] = std::min(values[2], max);
+}
+
+bool Vec3::is_zero()
+{
+    double epsilon = 1e-8;
+    return std::fabs(values[0]) < epsilon &&
+            std::fabs(values[1]) < epsilon &&
+            std::fabs(values[2]) < epsilon;
 }
 
 Vec3 Vec3::operator-() const
@@ -117,4 +126,9 @@ Vec3 unit(const Vec3 &v)
 std::ostream &operator<<(std::ostream &out, const Vec3 &v)
 {
     return out << v[0] << " " << v[1] << " " << v[2];
+}
+
+Vec3 pointwise_prod(const Vec3 &v, const Vec3 &w)
+{
+    return Vec3(v[0] * w[0], v[1] * w[1], v[2] * w[2]);
 }

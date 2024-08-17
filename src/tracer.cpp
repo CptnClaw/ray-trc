@@ -3,17 +3,19 @@
 #include "tracer.h"
 #include "sphere.h"
 #include "vec3.h"
+#include "lambertian.h"
+#include "metal.h"
 
 const double MIN_T=0.001; // Avoid fake collisions at very low t that come from floating point rounding errors
 const double MAX_T=std::numeric_limits<double>::infinity();
-const double BOUNCE_ABSORPTION=0.60;
   
 using std::make_shared;
 
-Tracer::Tracer(DiffuseModel diffuse) : diffuse(diffuse)
+Tracer::Tracer()
 {
     // Ground
-    objs.push_back(make_shared<Sphere>(Point(0, -101, -2), 100));
+    shared_ptr<Material> grnd = make_shared<Lambertian>(Color(0.7, 0.7, 0.7));
+    objs.push_back(make_shared<Sphere>(Point(0, -101, -2), 100, grnd));
 
     // Three spheres
     double radius1 = 1;
@@ -22,9 +24,12 @@ Tracer::Tracer(DiffuseModel diffuse) : diffuse(diffuse)
     Point center1 = Point(-0.8, 0, -2);
     Point center2 = center1 + unit(Point(1, 1, 1)) * (radius1 + radius2);
     Point center3 = center2 + unit(Point(2, 1, 2)) * (radius2 + radius3);
-    objs.push_back(make_shared<Sphere>(center1, radius1));
-    objs.push_back(make_shared<Sphere>(center2, radius2));
-    objs.push_back(make_shared<Sphere>(center3, radius3));
+    shared_ptr<Material> material1 = make_shared<Lambertian>(Color(0.7, 0.7, 0.7));
+    shared_ptr<Material> material2 = make_shared<Metal>(Color(0.7, 0.7, 0.7));
+    shared_ptr<Material> material3 = make_shared<Lambertian>(Color(0.7, 0.7, 0.7));
+    objs.push_back(make_shared<Sphere>(center1, radius1, material1));
+    objs.push_back(make_shared<Sphere>(center2, radius2, material2));
+    objs.push_back(make_shared<Sphere>(center3, radius3, material3));
 }
 
 Color Tracer::calc_color(const Ray &ray, int max_depth)
@@ -49,40 +54,22 @@ Color Tracer::calc_color(const Ray &ray, int max_depth)
 
     if (closest_hit.hit_time < MAX_T)
     {
-        if (dot(closest_hit.normal, ray.direction()) <= 0)
+        if (dot(closest_hit.normal, ray.direction()) > 0)
         {
-            // Ray is hitting the object from the outside
-            Color normal_color(0, 0, 0);// = (closest_hit.normal + Vec3(1,1,1)) / 2; // Convert coords from [-1, 1] to [0, 1]
-            
-            // Random ray bounce
-            Vec3 random_dir;
-            if (diffuse == DiffuseModel::Uniform)
-            {
-                // Distribution is uniform on the hemisphere above the surface
-                random_dir = rand.gen_uniform_unit_vec();
-                if (dot(random_dir, closest_hit.normal) < 0)
-                {
-                    // Make sure random bounce goes outside of the object (and not inside)
-                    random_dir = -random_dir;
-                }
-            }
-            else if (diffuse == DiffuseModel::Lambertian)
-            {
-                // Distribution lies more heavily near the surface normal
-                random_dir = closest_hit.normal + rand.gen_uniform_unit_vec();
-            }
-            else
-            {
-                std::cerr << "Invalid diffuse model" << std::endl;
-                return Color(0, 0, 0);
-            }
-
-            Ray random_ray(closest_hit.hit_point, random_dir);
-            Color bounce_color = calc_color(random_ray, max_depth-1);
-            return normal_color + (1 - BOUNCE_ABSORPTION) * bounce_color;
+            // Ray is hitting the object from the inside
+            return Color(0, 0, 0);
         }
-        // Ray is hitting the object from the inside
-        return Color(0, 0, 0);
+        
+        Ray scattered;
+        Color attenuation;
+        if (!closest_hit.material->scatter(ray, closest_hit.hit_point, closest_hit.normal, rand, scattered, attenuation))
+        {
+            // Ray is totally absorbed
+            return Color(0, 0, 0);
+        }
+        
+        // Returned the color of scattered ray 
+        return pointwise_prod(attenuation, calc_color(scattered, max_depth - 1));
     }
 
     // Not hit -- use background color

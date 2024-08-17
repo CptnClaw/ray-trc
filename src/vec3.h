@@ -32,6 +32,9 @@ class Vec3
         
         // Clamp all coordinates between min and max
         void clamp(double min, double max);
+        
+        // Checks if the vector is (almost) zero
+        bool is_zero();
 
     private:
         double values[3];
@@ -46,6 +49,7 @@ Vec3 operator*(const Vec3 &v, double t);
 Vec3 operator*(double t, const Vec3 &v);
 double dot(const Vec3 &v, const Vec3 &w);
 Vec3 cross(const Vec3 &v, const Vec3 &w);
+Vec3 pointwise_prod(const Vec3 &v, const Vec3 &w);
 
 // Get a unit vector in the same direction
 Vec3 unit(const Vec3 &v);
