@@ -8,8 +8,8 @@
 
 #define MAX_COLOR 255
 #define GAMMA 2.2
-#define SAMPLES_PER_PIXEL 100
-#define RAY_BOUNCE_LIMIT 50
+#define SAMPLES_PER_PIXEL 30
+#define RAY_BOUNCE_LIMIT 30
 
 Image::Image(const std::string &filename, Tracer *tracer, Viewport *view) : 
         filename(filename), tracer(tracer), view(view), width(view->screen_width), height(view->screen_height) {}

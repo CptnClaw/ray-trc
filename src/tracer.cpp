@@ -17,7 +17,7 @@ Tracer::Tracer()
     shared_ptr<Material> grnd = make_shared<Lambertian>(Color(0.7, 0.7, 0.7));
     objs.push_back(make_shared<Sphere>(Point(0, -101, -2), 100, grnd));
 
-    // Three spheres
+    // Three spheres on top of each other
     double radius1 = 1;
     double radius2 = 0.25;
     double radius3 = 0.125;
@@ -25,11 +25,15 @@ Tracer::Tracer()
     Point center2 = center1 + unit(Point(1, 1, 1)) * (radius1 + radius2);
     Point center3 = center2 + unit(Point(2, 1, 2)) * (radius2 + radius3);
     shared_ptr<Material> material1 = make_shared<Lambertian>(Color(0.7, 0.7, 0.7));
-    shared_ptr<Material> material2 = make_shared<Metal>(Color(0.7, 0.7, 0.7));
+    shared_ptr<Material> material2 = make_shared<Metal>(Color(0.7, 0.7, 0.7), 0.15);
     shared_ptr<Material> material3 = make_shared<Lambertian>(Color(0.7, 0.7, 0.7));
     objs.push_back(make_shared<Sphere>(center1, radius1, material1));
     objs.push_back(make_shared<Sphere>(center2, radius2, material2));
     objs.push_back(make_shared<Sphere>(center3, radius3, material3));
+    
+    // Golden sphere on the side
+    shared_ptr<Material> extra_material = make_shared<Metal>(Color(0.82, 0.5, 0.2), 0.02);
+    objs.push_back(make_shared<Sphere>(Point(1.2, -1.2, -2.2), 0.8, extra_material));
 }
 
 Color Tracer::calc_color(const Ray &ray, int max_depth)
