@@ -10,7 +10,6 @@ class Metal : public Material
         Metal(Color color, double roughness);
         
         // Calculates a new scattered ray that is perfectly reflected.
-        // Always returns true since we are assuming now that metals never absorve light.
         bool scatter(const Ray& in, const Point hit_point, const Vec3 &normal, Random &randomizer,
                             Ray &out, Color &attenuation) const override;
 

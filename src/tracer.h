@@ -17,7 +17,11 @@ class Tracer
         Color calc_color(const Ray &ray, int max_depth);
     private:
         std::vector<shared_ptr<Hittable>> objs;
+        Color sky_blue;
         Random rand;
+        
+        void CreateMyScene();
+        void CreateBookScene();
 };
 
 #endif // _TRACER_H_ 
