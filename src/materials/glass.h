@@ -19,7 +19,7 @@ class Glass : public Material
         double outward_refract_idx;
         double p;
 
-        static Vec3 refract(const Vec3 &in_dir, const Vec3 normal, double refract_idx);
+        static double reflection_coeff(double refraction, double cosine_theta);
 };
 
 

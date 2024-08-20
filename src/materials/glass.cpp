@@ -8,29 +8,49 @@ Glass::Glass(double material_refract_idx, double p) : p(p)
     outward_refract_idx = material_refract_idx;
 }
 
-Vec3 Glass::refract(const Vec3 &in_dir, const Vec3 normal, double refract_idx)
+double Glass::reflection_coeff(double refraction, double cosine_theta)
 {
-    Vec3 tangent = in_dir - std::fmax(dot(in_dir, normal), -1.0) * normal;
-    Vec3 out_dir_tangent = refract_idx * tangent;
-    Vec3 out_dir_normal = -std::sqrt(std::fabs(1 - out_dir_tangent.norm2())) * normal;
-    return out_dir_tangent + out_dir_normal;
+    // This calculation is based on Schlick's approximation
+    double R_0 = (1 - refraction)*(1 - refraction) / ((1 + refraction)*(1 + refraction));
+    double R_theta = R_0 + (1 - R_0) * std::pow(1 - cosine_theta, 5);
+    return R_theta;
 }
 
-bool Glass::scatter(const Ray& in, const Point hit_point, const Vec3 &normal, [[maybe_unused]] Random &randomizer,
+bool Glass::scatter(const Ray& in, const Point hit_point, const Vec3 &normal, Random &randomizer,
                         Ray &out, Color &attenuation) const
 { 
-    double cur_refract_idx = inward_refract_idx;
-    Vec3 cur_normal = normal;
+    // Calculate properties related to surface orientation
+    double eff_refract_idx = inward_refract_idx;
+    Vec3 eff_normal = normal;
     if (dot(in.direction(), normal) > 0) 
     {
         // Ray is going from inside to outside,
         // so effective refraction index has to be flipped (inversed),
-        // and the normal has to point inward for the refraction calculations.
-        cur_refract_idx = outward_refract_idx;
-        cur_normal = -normal;
+        // and the normal has to point inward.
+        eff_refract_idx = outward_refract_idx;
+        eff_normal = -normal;
     }
-    Vec3 refract_dir = Glass::refract(unit(in.direction()), cur_normal, cur_refract_idx);
-    out = Ray(hit_point, refract_dir);
+
+    // Calculate refracted ray
+    Vec3 in_dir = unit(in.direction());
+    double cosine_theta = dot(in_dir, eff_normal);
+    Vec3 projection = cosine_theta * eff_normal;
+    Vec3 tangent = in_dir - projection;
+    Vec3 out_dir_tangent = eff_refract_idx * tangent;
+    double tg_norm2 = out_dir_tangent.norm2();
+    if (tg_norm2 > 1 &&  // Total internal reflection
+        Glass::reflection_coeff(eff_refract_idx, -cosine_theta) > randomizer.gen_uniform()) // Ray randomly reflected
+    {
+        // Ray is reflected instead of refracted
+        out = Ray(hit_point, in_dir - 2 * projection);
+    }
+    else
+    {
+        // Finish calculating refracted ray
+        Vec3 out_dir_normal = -std::sqrt(std::fabs(1 - tg_norm2)) * eff_normal;
+        out = Ray(hit_point, out_dir_tangent + out_dir_normal);
+    }
+
     attenuation = color;
     return p>0;
 }

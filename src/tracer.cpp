@@ -55,7 +55,7 @@ void Tracer::CreateBookScene()
     sky_blue = Color(0.5, 0.7, 1.0);
     auto material_ground = make_shared<Lambertian>(Color(0.8, 0.8, 0.0));
     auto material_center = make_shared<Lambertian>(Color(0.1, 0.2, 0.5));
-    auto material_left = make_shared<Glass>(1.50, 1);
+    auto material_left = make_shared<Glass>(1.0 / 1.50, 1);
     auto material_right = make_shared<Metal>(Color(0.8, 0.6, 0.2), 1.0);
     objs.push_back(make_shared<Sphere>(Point( 0.0, -100.5, -1.0), 100.0, material_ground));
     objs.push_back(make_shared<Sphere>(Point( 0.0,    0.0, -1.2),   0.5, material_center));
