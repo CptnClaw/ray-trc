@@ -50,6 +50,7 @@ Vec3 operator*(double t, const Vec3 &v);
 double dot(const Vec3 &v, const Vec3 &w);
 Vec3 cross(const Vec3 &v, const Vec3 &w);
 Vec3 pointwise_prod(const Vec3 &v, const Vec3 &w);
+bool are_parallel(const Vec3 &v, const Vec3 &w);
 
 // Get a unit vector in the same direction
 Vec3 unit(const Vec3 &v);

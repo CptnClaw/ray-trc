@@ -1,6 +1,8 @@
 #include <math.h>
 #include "vec3.h"
 
+const double EPSILON=1e-8;
+
 // Class methods
 Vec3::Vec3() : values{0, 0, 0} {}
 Vec3::Vec3(double x, double y, double z) : values{x, y, z} {}
@@ -45,10 +47,9 @@ void Vec3::clamp(double min, double max)
 
 bool Vec3::is_zero()
 {
-    double epsilon = 1e-8;
-    return std::fabs(values[0]) < epsilon &&
-            std::fabs(values[1]) < epsilon &&
-            std::fabs(values[2]) < epsilon;
+    return std::fabs(values[0]) < EPSILON &&
+            std::fabs(values[1]) < EPSILON &&
+            std::fabs(values[2]) < EPSILON;
 }
 
 Vec3 Vec3::operator-() const
@@ -114,6 +115,11 @@ Vec3 cross(const Vec3 &v, const Vec3 &w)
     return Vec3(v[1]*w[2] - v[2]*w[1],
                 v[2]*w[0] - v[0]*w[2],
                 v[0]*w[1] - v[1]*w[0]);
+}
+
+bool are_parallel(const Vec3 &v, const Vec3 &w)
+{
+    return dot(unit(v), unit(w)) > 1 - EPSILON;
 }
 
 Vec3 unit(const Vec3 &v)

@@ -12,7 +12,10 @@
 class Viewport
 {
     public:
-        Viewport(int screen_width);
+        // screen_width is the width (in pixels) of the display window.
+        // vertical_fov (field of view) is the angle (in radians) between the upper and lower edges of the viewport.
+        Viewport(int screen_width, double vertical_fov,
+                Point look_from, Point look_at, Vec3 vup);
         
         Ray get_ray(int x, int y) const;
 
@@ -20,6 +23,13 @@ class Viewport
         int screen_height;
 
     private:
+        
+        // Orthonormal basis of camera space. As conventional:
+        // u points right.
+        // v points up.
+        // w points back.
+        Vec3 u,v,w;
+
         double viewport_width;
         double viewport_height;
         

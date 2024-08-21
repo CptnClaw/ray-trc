@@ -1,23 +1,28 @@
 #include "viewport.h"
 
-Viewport::Viewport(int screen_width)
+Viewport::Viewport(int screen_width, double vertical_fov,
+                    Point look_from, Point look_at, Vec3 vup)
 {
+    // Set origin of rays and camera orthonormal system
+    camera_center = look_from;
+    focal_length = (look_at - look_from).norm();
+    Vec3 viewing_direction = unit(look_at - look_from);
+    v = unit(vup - dot(vup, viewing_direction) * viewing_direction);
+    u = cross(viewing_direction, v);
+    w = -viewing_direction;
+
     // Set widths and heights
     this->screen_width = screen_width;
     screen_height = int(screen_width / ASPECT_RATIO);
     screen_height = screen_height < 1 ? 1 : screen_height;
     double actual_aspect_ratio = double(screen_width) / double(screen_height);
-    viewport_height = 2;
+    viewport_height = 2 * std::tan(vertical_fov / 2) * focal_length;
     viewport_width = viewport_height * actual_aspect_ratio;
 
-    // Set origin of rays
-    camera_center = Point(); 
-    focal_length = 1;
-
     // Calculate viewport rect
-    Point viewport_center = camera_center + Vec3(0, 0, -focal_length);
-    horizontal_vec = Vec3(viewport_width, 0, 0);
-    vertical_vec = Vec3(0, -viewport_height, 0);
+    Point viewport_center = look_at;
+    horizontal_vec = viewport_width * u;
+    vertical_vec = -viewport_height * v;
     top_left = viewport_center - (horizontal_vec / 2) - (vertical_vec / 2);
 
     // Calculate pixel spacing and location

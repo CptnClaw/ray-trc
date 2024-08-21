@@ -45,9 +45,11 @@ void Tracer::CreateMyScene()
     shared_ptr<Material> gold = make_shared<Metal>(Color(0.82, 0.5, 0.2), 0.02);
     objs.push_back(make_shared<Sphere>(Point(1.2, -1.2, -2.2), 0.8, gold));
 
-    // Glass sphere in front
+    // Glass bubble in front
     shared_ptr<Material> glass = make_shared<Glass>(1.5, 1);
+    shared_ptr<Material> bubble = make_shared<Glass>(1.0 / 1.5, 1);
     objs.push_back(make_shared<Sphere>(Point(0, -0.5, -1), 0.25, glass));
+    objs.push_back(make_shared<Sphere>(Point(0, -0.5, -1), 0.2, bubble));
 }
 
 void Tracer::CreateBookScene()
@@ -55,11 +57,13 @@ void Tracer::CreateBookScene()
     sky_blue = Color(0.5, 0.7, 1.0);
     auto material_ground = make_shared<Lambertian>(Color(0.8, 0.8, 0.0));
     auto material_center = make_shared<Lambertian>(Color(0.1, 0.2, 0.5));
-    auto material_left = make_shared<Glass>(1.0 / 1.50, 1);
+    auto material_left = make_shared<Glass>(1.50, 1);
+    auto material_bubble = make_shared<Glass>(1.0 / 1.50, 1);
     auto material_right = make_shared<Metal>(Color(0.8, 0.6, 0.2), 1.0);
     objs.push_back(make_shared<Sphere>(Point( 0.0, -100.5, -1.0), 100.0, material_ground));
     objs.push_back(make_shared<Sphere>(Point( 0.0,    0.0, -1.2),   0.5, material_center));
     objs.push_back(make_shared<Sphere>(Point(-1.0,    0.0, -1.0),   0.5, material_left));
+    objs.push_back(make_shared<Sphere>(Point(-1.0,    0.0, -1.0),   0.4, material_bubble));
     objs.push_back(make_shared<Sphere>(Point( 1.0,    0.0, -1.0),   0.5, material_right));
 }
 
@@ -82,12 +86,6 @@ Color Tracer::calc_color(const Ray &ray, int max_depth)
 
         if (closest_hit.hit_time < MAX_T)
         {
-            // if (dot(closest_hit.normal, ray.direction()) > 0)
-            // {
-            //     // Ray is hitting the object from the inside
-            //     return Color(0, 0, 0);
-            // }
-
             Ray scattered;
             Color attenuation;
             if (!closest_hit.material->scatter(ray, closest_hit.hit_point, closest_hit.normal, rand, scattered, attenuation))

@@ -38,16 +38,17 @@ bool Glass::scatter(const Ray& in, const Point hit_point, const Vec3 &normal, Ra
     Vec3 tangent = in_dir - projection;
     Vec3 out_dir_tangent = eff_refract_idx * tangent;
     double tg_norm2 = out_dir_tangent.norm2();
-    if (tg_norm2 > 1 &&  // Total internal reflection
+    if (tg_norm2 > 1 ||  // Total internal reflection
         Glass::reflection_coeff(eff_refract_idx, -cosine_theta) > randomizer.gen_uniform()) // Ray randomly reflected
     {
         // Ray is reflected instead of refracted
         out = Ray(hit_point, in_dir - 2 * projection);
     }
-    else
+    else 
     {
         // Finish calculating refracted ray
-        Vec3 out_dir_normal = -std::sqrt(std::fabs(1 - tg_norm2)) * eff_normal;
+        double complement2 = 1 - tg_norm2;
+        Vec3 out_dir_normal = -std::sqrt(complement2) * eff_normal;
         out = Ray(hit_point, out_dir_tangent + out_dir_normal);
     }
 
