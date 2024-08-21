@@ -15,7 +15,7 @@ class Random
 
         // Returns a random number in [min_val, max_val)
         double gen_uniform(double min_val, double max_val);
-
+        
         // Returns a random unit vector
         Vec3 gen_uniform_unit_vec();
         

@@ -1,7 +1,7 @@
 #include "viewport.h"
 
 Viewport::Viewport(int screen_width, double vertical_fov,
-                    Point look_from, Point look_at, Vec3 vup)
+                    Point look_from, Point look_at, Vec3 vup, double lens_cone_angle)
 {
     // Set origin of rays and camera orthonormal system
     camera_center = look_from;
@@ -16,7 +16,7 @@ Viewport::Viewport(int screen_width, double vertical_fov,
     screen_height = int(screen_width / ASPECT_RATIO);
     screen_height = screen_height < 1 ? 1 : screen_height;
     double actual_aspect_ratio = double(screen_width) / double(screen_height);
-    viewport_height = 2 * std::tan(vertical_fov / 2) * focal_length;
+    viewport_height = 2 * std::tan(vertical_fov / 2.0) * focal_length;
     viewport_width = viewport_height * actual_aspect_ratio;
 
     // Calculate viewport rect
@@ -29,10 +29,25 @@ Viewport::Viewport(int screen_width, double vertical_fov,
     horizontal_delta = horizontal_vec / screen_width;
     vertical_delta = vertical_vec / screen_height;
     first_pixel = Point(top_left + 0.5 * horizontal_delta + 0.5 * vertical_delta);
+    
+    // Calculate lens vectors
+    lens_radius = std::tan(lens_cone_angle / 2.0) * focal_length;
+    lens_horizontal_vec = lens_radius * u;
+    lens_vertical_vec = lens_radius * v;
 }
 
-Ray Viewport::get_ray(int x, int y) const
+Ray Viewport::get_ray(int x, int y) 
 {
-    Vec3 direction = first_pixel + (x * horizontal_delta) + (y * vertical_delta) - camera_center;
-    return Ray(camera_center, direction);
+    double lens_x = 0, lens_y = 0;
+    if (lens_radius > 0)
+    {
+        do
+        {
+            lens_x = rand.gen_uniform();
+            lens_y = rand.gen_uniform();
+        } while (lens_x * lens_x + lens_y * lens_y > 1);
+    }
+    Point origin = camera_center + lens_x * lens_horizontal_vec + lens_y * lens_vertical_vec;
+    Vec3 direction = first_pixel + (x * horizontal_delta) + (y * vertical_delta) - origin;
+    return Ray(origin, direction);
 }

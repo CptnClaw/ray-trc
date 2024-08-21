@@ -1,7 +1,7 @@
 #include "glass.h"
 #include "vec3.h"
 
-Glass::Glass(double material_refract_idx, double p) : p(p)
+Glass::Glass(double material_refract_idx)
 {
     color = Color(1.0, 1.0, 1.0);
     inward_refract_idx = 1.0 / material_refract_idx;
@@ -53,5 +53,5 @@ bool Glass::scatter(const Ray& in, const Point hit_point, const Vec3 &normal, Ra
     }
 
     attenuation = color;
-    return p>0;
+    return true;
 }

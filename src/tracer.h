@@ -22,6 +22,7 @@ class Tracer
         
         void CreateMyScene();
         void CreateBookScene();
+        void CreateBookFinalScene();
 };
 
 #endif // _TRACER_H_ 

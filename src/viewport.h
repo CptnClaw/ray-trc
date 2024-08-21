@@ -3,6 +3,7 @@
 
 #include "vec3.h"
 #include "ray.h"
+#include "random.h"
 
 #define ASPECT_RATIO (4.0/3.0)
 
@@ -15,9 +16,9 @@ class Viewport
         // screen_width is the width (in pixels) of the display window.
         // vertical_fov (field of view) is the angle (in radians) between the upper and lower edges of the viewport.
         Viewport(int screen_width, double vertical_fov,
-                Point look_from, Point look_at, Vec3 vup);
+                Point look_from, Point look_at, Vec3 vup, double lense_cone_angle);
         
-        Ray get_ray(int x, int y) const;
+        Ray get_ray(int x, int y);
 
         int screen_width;
         int screen_height;
@@ -41,6 +42,12 @@ class Viewport
         Point top_left;
         Vec3 horizontal_vec;
         Vec3 vertical_vec;
+        
+        // Lens
+        double lens_radius;
+        Vec3 lens_horizontal_vec;
+        Vec3 lens_vertical_vec;
+        Random rand;
         
         // Distance between pixels
         Vec3 horizontal_delta; 
