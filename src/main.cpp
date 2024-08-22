@@ -17,7 +17,7 @@ int main(int argc, char **argv)
     
     // Define camera position
     Point look_from(13, 2, 3);
-    Point look_at = 0;
+    Point look_at;
     Vec3 vup(0, 1, 0);
     double lens_cone_angle = PI / 500.0;
 
