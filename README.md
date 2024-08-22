@@ -3,6 +3,7 @@ Ray tracer built over several weekends.
 
 ### Current progress
 ![Progress thus far](https://raw.githubusercontent.com/CptnClaw/ray-trc/master/orot.png)
+![Book 1 final](https://raw.githubusercontent.com/CptnClaw/ray-trc/master/final-dof0.png)
 
 ### Acknowledgements
 This is a learning project for me to experiment with ray tracing and rendering techniques. 
