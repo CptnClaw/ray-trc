@@ -8,8 +8,6 @@
 
 #define MAX_COLOR 255
 #define GAMMA 2.2
-#define SAMPLES_PER_PIXEL 100
-#define RAY_BOUNCE_LIMIT 30
 
 Image::Image(const std::string &filename, Tracer *tracer, Viewport *view) : 
         filename(filename), tracer(tracer), view(view), width(view->screen_width), height(view->screen_height) {}
@@ -25,7 +23,7 @@ Color linear_to_gamma(Color linear_color)
     return gamma_color;
 }
 
-bool Image::render()
+bool Image::render(int samples_per_pixel, int ray_bounce_limit)
 {
     // Open file
     std::ofstream out(filename);
@@ -52,15 +50,15 @@ bool Image::render()
         for (int x = 0; x < width; x++)
         {
             Color color; // Start with (0, 0, 0) and accumulate samples
-            for (int s = 0; s < SAMPLES_PER_PIXEL; s++)
+            for (int s = 0; s < samples_per_pixel; s++)
             {
                 double offset_h = random.gen_uniform(-0.5, 0.5);
                 double offset_v = random.gen_uniform(-0.5, 0.5);
                 Ray ray = view->get_ray(x + offset_h, y + offset_v);
-                Color cur_color = tracer->calc_color(ray, RAY_BOUNCE_LIMIT);
+                Color cur_color = tracer->calc_color(ray, ray_bounce_limit);
                 color += cur_color;
             }
-            color /= SAMPLES_PER_PIXEL; // Average samples
+            color /= samples_per_pixel; // Average samples
             color.clamp(0, 1);
             color = linear_to_gamma(color); // Gamma correction
             out << (color * MAX_COLOR).round() << std::endl;

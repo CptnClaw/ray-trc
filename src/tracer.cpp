@@ -15,7 +15,7 @@ using std::make_shared;
 
 Tracer::Tracer()
 {
-    CreateMyScene();
+    CreateBookFinalScene();
 }
 
 void Tracer::CreateMyScene()
@@ -69,6 +69,7 @@ void Tracer::CreateBookScene()
 
 void Tracer::CreateBookFinalScene()
 {
+    sky_blue = Color(0.5, 0.7, 1.0);
     auto ground_material = make_shared<Lambertian>(Color(0.5, 0.5, 0.5));
     objs.push_back(make_shared<Sphere>(Point(0,-1000,0), 1000, ground_material));
 

@@ -1,6 +1,6 @@
 #include "viewport.h"
 
-Viewport::Viewport(int screen_width, double vertical_fov,
+Viewport::Viewport(int screen_width, double aspect_ratio, double vertical_fov,
                     Point look_from, Point look_at, Vec3 vup, double lens_cone_angle)
 {
     // Set origin of rays and camera orthonormal system
@@ -13,7 +13,7 @@ Viewport::Viewport(int screen_width, double vertical_fov,
 
     // Set widths and heights
     this->screen_width = screen_width;
-    screen_height = int(screen_width / ASPECT_RATIO);
+    screen_height = int(screen_width / aspect_ratio);
     screen_height = screen_height < 1 ? 1 : screen_height;
     double actual_aspect_ratio = double(screen_width) / double(screen_height);
     viewport_height = 2 * std::tan(vertical_fov / 2.0) * focal_length;
@@ -43,8 +43,8 @@ Ray Viewport::get_ray(int x, int y)
     {
         do
         {
-            lens_x = rand.gen_uniform();
-            lens_y = rand.gen_uniform();
+            lens_x = rand.gen_uniform(-1, 1);
+            lens_y = rand.gen_uniform(-1, 1);
         } while (lens_x * lens_x + lens_y * lens_y > 1);
     }
     Point origin = camera_center + lens_x * lens_horizontal_vec + lens_y * lens_vertical_vec;

@@ -5,8 +5,6 @@
 #include "ray.h"
 #include "random.h"
 
-#define ASPECT_RATIO (4.0/3.0)
-
 // This viewport uses "right-handed coordinates",
 // namely, y-axis goes up, x-axis goes right,
 // and the negative z-axix goes in the viewing direction.
@@ -15,7 +13,7 @@ class Viewport
     public:
         // screen_width is the width (in pixels) of the display window.
         // vertical_fov (field of view) is the angle (in radians) between the upper and lower edges of the viewport.
-        Viewport(int screen_width, double vertical_fov,
+        Viewport(int screen_width, double aspect_ratio, double vertical_fov,
                 Point look_from, Point look_at, Vec3 vup, double lense_cone_angle);
         
         Ray get_ray(int x, int y);

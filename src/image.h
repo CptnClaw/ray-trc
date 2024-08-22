@@ -12,7 +12,7 @@ class Image
         Image(const std::string &filename, Tracer *tracer, Viewport *view);
 
         // Returns false is there as an error opening the file
-        bool render();
+        bool render(int samples_per_pixel, int ray_bounce_limit);
         
     private:
         std::string filename;
