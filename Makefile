@@ -1,5 +1,5 @@
 CC=clang++
-CSTD=-std=c++23
+CSTD=-std=c++20
 WARN=-Wall -Wextra -Wpedantic -Werror
 # SOURCE=src/main.cpp src/image.cpp src/vec3.cpp src/ray.cpp src/viewport.cpp src/sphere.cpp src/tracer.cpp src/random.cpp src/lambertian.cpp src/metal.cpp
 SOURCE=src/*.cpp src/*/*.cpp
