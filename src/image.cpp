@@ -42,7 +42,7 @@ bool Image::render(int samples_per_pixel, int ray_bounce_limit)
     for (int y = 0; y < height; y++)
     {
         // Print progress bar
-        if (y % 10 == 0)
+        if (y % 50 == 0)
         {
             std::clog << (height - y) << " scanlines remaining" << std::endl;
         }
@@ -52,8 +52,8 @@ bool Image::render(int samples_per_pixel, int ray_bounce_limit)
             Color color; // Start with (0, 0, 0) and accumulate samples
             for (int s = 0; s < samples_per_pixel; s++)
             {
-                double offset_h = random.gen_uniform(-0.5, 0.5);
-                double offset_v = random.gen_uniform(-0.5, 0.5);
+                double offset_h = random.gen_normal();
+                double offset_v = random.gen_normal();
                 Ray ray = view->get_ray(x + offset_h, y + offset_v);
                 Color cur_color = tracer->calc_color(ray, ray_bounce_limit);
                 color += cur_color;

@@ -15,7 +15,7 @@ using std::make_shared;
 
 Tracer::Tracer()
 {
-    CreateBookFinalScene();
+    CreateMyScene();
 }
 
 void Tracer::CreateMyScene()
@@ -27,7 +27,7 @@ void Tracer::CreateMyScene()
     shared_ptr<Material> grnd = make_shared<Lambertian>(Color(0.7, 0.7, 0.7));
     objs.push_back(make_shared<Sphere>(Point(0, -101, -2), 100, grnd));
 
-    // Three spheres on top ofeach other
+    // Three spheres on top of each other
     double radius1 = 1;
     double radius2 = 0.25;
     double radius3 = 0.125;

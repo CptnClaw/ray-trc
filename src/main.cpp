@@ -4,11 +4,11 @@
 
 #define PI              3.1415926535897932385
 #define SCREEN_WIDTH    800
-#define VFOV            (PI / 9)
+#define VFOV            (PI / 4)
 #define ASPECT_RATIO    (4.0 / 3.0)
 
-#define SAMPLES_PER_PIXEL 5
-#define RAY_BOUNCE_LIMIT 6
+#define SAMPLES_PER_PIXEL 100
+#define RAY_BOUNCE_LIMIT 50
 
 int main(int argc, char **argv)
 {
@@ -16,10 +16,10 @@ int main(int argc, char **argv)
     (void)argv; // Mark as unused
     
     // Define camera position
-    Point look_from(13, 2, 3);
-    Point look_at;
+    Point look_from(0, 0, 2);
+    Point look_at(0, 0, -1.5);
     Vec3 vup(0, 1, 0);
-    double lens_cone_angle = PI / 500.0;
+    double lens_cone_angle = PI / 100.0;
 
     if (are_parallel(look_at - look_from, vup))
     {
