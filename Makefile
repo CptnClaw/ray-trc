@@ -4,7 +4,7 @@ SOURCE=src/*.cpp src/*/*.cpp
 INCLUDE=-Isrc -Isrc/materials -Isrc/math -Isrc/shapes
 OUTPUT=ray-trc
 DEBUG=-g3 -O0
-RELEASE=-O3
+RELEASE=-g -O3
 
 build: 
 	$(CC) $(WARN) $(SOURCE) $(RELEASE) $(INCLUDE) -o $(OUTPUT)

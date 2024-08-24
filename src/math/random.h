@@ -23,7 +23,7 @@ class Random
         Vec3 gen_uniform_unit_vec();
         
     private:
-        std::mt19937 rng;
+        std::minstd_rand0 rng;
         std::uniform_real_distribution<double> uniform_dist;
         std::normal_distribution<double> normal_dist;
 };

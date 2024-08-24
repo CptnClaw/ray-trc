@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include "image.h"
 #include "viewport.h"
 
@@ -9,6 +10,19 @@
 
 #define SAMPLES_PER_PIXEL 100
 #define RAY_BOUNCE_LIMIT 50
+
+#define ROTATIONS 1
+
+// Rotate a point around a center in the XZ plane
+Point rotate(const Point &p, const Point &center, double cosine, double sine)
+{
+    Vec3 dir = p - center;
+    double x = dir.x();
+    double y = dir.y();
+    double z = dir.z();
+    Vec3 rotated_dir(x*cosine + z*sine, y, -x*sine + z*cosine);
+    return center + rotated_dir;
+}
 
 int main(int argc, char **argv)
 {
@@ -28,9 +42,20 @@ int main(int argc, char **argv)
     }
 
     Tracer tracer;
-    Viewport view(SCREEN_WIDTH, ASPECT_RATIO, VFOV, look_from, look_at, vup, lens_cone_angle);
-    Image image("orot.ppm", &tracer, &view);
+    bool result = true;
+    double rotation_cos = std::cos(2 * PI / ROTATIONS);
+    double rotation_sin = std::sin(2 * PI / ROTATIONS);
+    for (int i = 0; i < ROTATIONS; i++)
+    {
+        std::cout << ROTATIONS - i << " rotations remaining" << std::endl;
+        std::stringstream filename;
+        filename << "orot" << i << ".ppm";
 
-    bool result = image.render(SAMPLES_PER_PIXEL, RAY_BOUNCE_LIMIT);
+        Viewport view(SCREEN_WIDTH, ASPECT_RATIO, VFOV, look_from, look_at, vup, lens_cone_angle);
+        Image image(filename.str(), &tracer, &view);
+        result &= image.render(SAMPLES_PER_PIXEL, RAY_BOUNCE_LIMIT);
+
+        look_from = rotate(look_from, look_at, rotation_cos, rotation_sin);
+    }
     return result ? 0 : 1;
 }

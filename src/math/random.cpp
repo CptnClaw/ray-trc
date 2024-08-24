@@ -4,7 +4,7 @@
 Random::Random()
 {
     std::random_device seeder;
-    rng = std::mt19937(seeder());
+    rng = std::minstd_rand0(seeder());
     uniform_dist = std::uniform_real_distribution<double>(0.0, 1.0);
     normal_dist = std::normal_distribution<double>(0.0, 0.5);
 }
