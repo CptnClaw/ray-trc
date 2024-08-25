@@ -5,10 +5,7 @@
 using std::shared_ptr;
 
 Sphere::Sphere(const Point &center, double radius, shared_ptr<Material> material)
-                : center(center), radius(radius)
-{
-    this->material = material;
-}
+                : center(center), radius(radius), material(material) {}
 
 bool Sphere::hit(const Ray &ray, double tmin, double tmax, HitData &result)
 {

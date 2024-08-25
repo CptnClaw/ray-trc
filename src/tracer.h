@@ -5,7 +5,7 @@
 #include <memory>
 #include "vec3.h"
 #include "ray.h"
-#include "hittable.h"
+#include "sphere.h"
 #include "random.h"
 
 using std::shared_ptr;
@@ -16,7 +16,7 @@ class Tracer
         Tracer();
         Color calc_color(const Ray &ray, int max_depth);
     private:
-        std::vector<shared_ptr<Hittable>> objs;
+        std::vector<shared_ptr<Sphere>> objs;
         Color sky_blue;
         
         void CreateMyScene();
