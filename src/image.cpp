@@ -13,7 +13,7 @@ Image::Image(const std::string &filename, Tracer *tracer, Viewport *view) :
         filename(filename), tracer(tracer), view(view), width(view->screen_width), height(view->screen_height) {}
         
 // Gamma correction
-Color linear_to_gamma(Color linear_color)
+inline Color linear_to_gamma(Color linear_color)
 {
     Color gamma_color;
     for (int i=0; i<3; i++)
@@ -52,8 +52,8 @@ bool Image::render(int samples_per_pixel, int ray_bounce_limit)
             Color color; // Start with (0, 0, 0) and accumulate samples
             for (int s = 0; s < samples_per_pixel; s++)
             {
-                double offset_h = random.gen_normal();
-                double offset_v = random.gen_normal();
+                double offset_h = Random::gen_uniform(-0.5, 0.5);
+                double offset_v = Random::gen_uniform(-0.5, 0.5);
                 Ray ray = view->get_ray(x + offset_h, y + offset_v);
                 Color cur_color = tracer->calc_color(ray, ray_bounce_limit);
                 color += cur_color;
@@ -61,7 +61,7 @@ bool Image::render(int samples_per_pixel, int ray_bounce_limit)
             color /= samples_per_pixel; // Average samples
             color.clamp(0, 1);
             color = linear_to_gamma(color); // Gamma correction
-            out << (color * MAX_COLOR).round() << std::endl;
+            out << color * MAX_COLOR << std::endl;
         }
     }
     std::clog << "Done" << std::endl;

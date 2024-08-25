@@ -20,7 +20,6 @@ class Image
         Viewport *view;
         int width;
         int height;
-        Random random;
 };
 
 #endif // _IMAGE_H_

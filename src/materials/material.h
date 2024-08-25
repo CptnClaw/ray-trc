@@ -3,7 +3,6 @@
 
 #include "vec3.h"
 #include "ray.h"
-#include "random.h"
 
 class Material
 {
@@ -13,7 +12,7 @@ class Material
 
         // Calculates a new scattered ray its attenuation based on any specific material impl.
         // Returns false if the ray was fully absorbed (i.e. no scattering).
-        virtual bool scatter(const Ray& in, const Point hit_point, const Vec3 &normal, Random &randomizer,
+        virtual bool scatter(const Ray& in, const Point hit_point, const Vec3 &normal,
                             Ray &out, Color &attenuation) const = 0;
         
     protected:

@@ -11,7 +11,7 @@ class Glass : public Material
         Glass(double material_refract_idx);
         
         // Calculates a new scattered ray that is either reflected or refracted with probability p.
-        bool scatter(const Ray& in, const Point hit_point, const Vec3 &normal, Random &randomizer,
+        bool scatter(const Ray& in, const Point hit_point, const Vec3 &normal,
                             Ray &out, Color &attenuation) const override;
 
     private:

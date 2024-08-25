@@ -75,22 +75,22 @@ void Tracer::CreateBookFinalScene()
 
     for (int a = -11; a < 11; a++) {
         for (int b = -11; b < 11; b++) {
-            auto choose_mat = rand.gen_uniform();
-            Point center(a + 0.9*rand.gen_uniform(), 0.2, b + 0.9*rand.gen_uniform());
+            auto choose_mat = Random::gen_uniform();
+            Point center(a + 0.9*Random::gen_uniform(), 0.2, b + 0.9*Random::gen_uniform());
 
             if ((center - Point(4, 0.2, 0)).norm() > 0.9) {
                 shared_ptr<Material> sphere_material;
 
                 if (choose_mat < 0.8) {
                     // diffuse
-                    auto albedo = pointwise_prod(Color(rand.gen_uniform(), rand.gen_uniform(), rand.gen_uniform()),
-                                    Color(rand.gen_uniform(), rand.gen_uniform(), rand.gen_uniform()));
+                    auto albedo = pointwise_prod(Color(Random::gen_uniform(), Random::gen_uniform(), Random::gen_uniform()),
+                                    Color(Random::gen_uniform(), Random::gen_uniform(), Random::gen_uniform()));
                     sphere_material = make_shared<Lambertian>(albedo);
                     objs.push_back(make_shared<Sphere>(center, 0.2, sphere_material));
                 } else if (choose_mat < 0.95) {
                     // metal
-                    auto albedo = Color(rand.gen_uniform(0.5, 1), rand.gen_uniform(0.5, 1), rand.gen_uniform(0.5, 1)); 
-                    auto fuzz = rand.gen_uniform(0, 0.5);
+                    auto albedo = Color(Random::gen_uniform(0.5, 1), Random::gen_uniform(0.5, 1), Random::gen_uniform(0.5, 1)); 
+                    auto fuzz = Random::gen_uniform(0, 0.5);
                     sphere_material = make_shared<Metal>(albedo, fuzz);
                     objs.push_back(make_shared<Sphere>(center, 0.2, sphere_material));
                 } else {
@@ -133,7 +133,7 @@ Color Tracer::calc_color(const Ray &ray, int max_depth)
         {
             Ray scattered;
             Color attenuation;
-            if (!closest_hit.material->scatter(ray, closest_hit.hit_point, closest_hit.normal, rand, scattered, attenuation))
+            if (!closest_hit.material->scatter(ray, closest_hit.hit_point, closest_hit.normal, scattered, attenuation))
             {
                 // Ray is totally absorbed
                 return Color(0, 0, 0);

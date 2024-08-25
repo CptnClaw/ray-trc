@@ -131,7 +131,7 @@ Vec3 unit(const Vec3 &v)
 
 std::ostream &operator<<(std::ostream &out, const Vec3 &v)
 {
-    return out << v[0] << " " << v[1] << " " << v[2];
+    return out << int(v[0]) << " " << int(v[1]) << " " << int(v[2]);
 }
 
 Vec3 pointwise_prod(const Vec3 &v, const Vec3 &w)

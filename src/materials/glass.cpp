@@ -1,5 +1,6 @@
 #include "glass.h"
 #include "vec3.h"
+#include "random.h" 
 
 Glass::Glass(double material_refract_idx)
 {
@@ -16,7 +17,7 @@ double Glass::reflection_coeff(double refraction, double cosine_theta)
     return R_theta;
 }
 
-bool Glass::scatter(const Ray& in, const Point hit_point, const Vec3 &normal, Random &randomizer,
+bool Glass::scatter(const Ray& in, const Point hit_point, const Vec3 &normal, 
                         Ray &out, Color &attenuation) const
 { 
     // Calculate properties related to surface orientation
@@ -39,7 +40,7 @@ bool Glass::scatter(const Ray& in, const Point hit_point, const Vec3 &normal, Ra
     Vec3 out_dir_tangent = eff_refract_idx * tangent;
     double tg_norm2 = out_dir_tangent.norm2();
     if (tg_norm2 > 1 ||  // Total internal reflection
-        Glass::reflection_coeff(eff_refract_idx, -cosine_theta) > randomizer.gen_uniform()) // Ray randomly reflected
+        Glass::reflection_coeff(eff_refract_idx, -cosine_theta) > Random::gen_uniform()) // Ray randomly reflected
     {
         // Ray is reflected instead of refracted
         out = Ray(hit_point, in_dir - 2 * projection);

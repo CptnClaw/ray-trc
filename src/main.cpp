@@ -2,6 +2,7 @@
 #include <sstream>
 #include "image.h"
 #include "viewport.h"
+#include "random.h"
 
 #define PI              3.1415926535897932385
 #define SCREEN_WIDTH    800
@@ -41,6 +42,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    Random::init();
     Tracer tracer;
     bool result = true;
     double rotation_cos = std::cos(2 * PI / ROTATIONS);

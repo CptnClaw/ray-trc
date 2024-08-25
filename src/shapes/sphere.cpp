@@ -13,12 +13,11 @@ Sphere::Sphere(const Point &center, double radius, shared_ptr<Material> material
 bool Sphere::hit(const Ray &ray, double tmin, double tmax, HitData &result)
 {
     // Quadratic data
-    // TODO: There is an easy way to optimize the calculations below.
-    //       Check if the code can be sped up.
     double a = ray.direction().norm2();
-    double b = -2 * dot(ray.direction(), center - ray.origin());
-    double c = (center - ray.origin()).norm2() - radius * radius;
-    double discriminant = b*b - 4*a*c;
+    Vec3 origin_to_center = center - ray.origin();
+    double h = dot(ray.direction(), origin_to_center); // b = -2h
+    double c = origin_to_center.norm2() - radius * radius;
+    double discriminant = h*h - a*c; // actually discriminant / 4
     if (discriminant < 0)
     {
         return false;
@@ -27,10 +26,10 @@ bool Sphere::hit(const Ray &ray, double tmin, double tmax, HitData &result)
     // Collision exists
     // Find its time and check if it falls in range
     double sqrt_discr = std::sqrt(discriminant);
-    double hit_t = (-b - sqrt_discr) / (2*a);
+    double hit_t = (h - sqrt_discr) / a;
     if (hit_t < tmin || tmax < hit_t)
     {
-        hit_t = (-b + sqrt_discr) / (2*a);
+        hit_t = (h + sqrt_discr) / a;
         if (hit_t < tmin || tmax < hit_t)
         {
             return false;

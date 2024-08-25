@@ -18,7 +18,6 @@ class Tracer
     private:
         std::vector<shared_ptr<Hittable>> objs;
         Color sky_blue;
-        Random rand;
         
         void CreateMyScene();
         void CreateBookScene();

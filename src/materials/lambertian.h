@@ -11,7 +11,7 @@ class Lambertian : public Material
         // Calculates a new scattered ray randomly according to Lambert's cosine law,
         // namely according to a distribution weighted mostly about the normal direction.
         // Always returns true since we are assuming now that diffusive materials never fully absorve light.
-        bool scatter(const Ray& in, const Point hit_point, const Vec3 &normal, Random &randomizer,
+        bool scatter(const Ray& in, const Point hit_point, const Vec3 &normal, 
                             Ray &out, Color &attenuation) const override;
         
 };
