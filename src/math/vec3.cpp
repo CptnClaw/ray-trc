@@ -1,8 +1,6 @@
 #include <math.h>
 #include "vec3.h"
 
-const double EPSILON=1e-8;
-
 // Class methods
 Vec3::Vec3() : values{0, 0, 0} {}
 Vec3::Vec3(double x, double y, double z) : values{x, y, z} {}
@@ -119,7 +117,7 @@ Vec3 cross(const Vec3 &v, const Vec3 &w)
 
 bool are_parallel(const Vec3 &v, const Vec3 &w)
 {
-    return dot(unit(v), unit(w)) > 1 - EPSILON;
+    return v.norm2() * w.norm2() - dot(v,w) * dot(v,w) < EPSILON;
 }
 
 Vec3 unit(const Vec3 &v)

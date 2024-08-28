@@ -1,7 +1,7 @@
 CC=clang++
 WARN=-Wall -Wextra -Wpedantic -Werror
 SOURCE=src/*.cpp src/*/*.cpp
-INCLUDE=-Isrc -Isrc/materials -Isrc/math -Isrc/shapes
+INCLUDE=-Isrc -Isrc/materials -Isrc/math -Isrc/shapes -Isrc/bvh
 OUTPUT=ray-trc
 DEBUG=-g3 -O0
 RELEASE=-g -O3

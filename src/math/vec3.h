@@ -4,6 +4,8 @@
 #include <iostream>
 #include <cmath>
 
+#define EPSILON 1e-8
+
 class Vec3
 {
     public:

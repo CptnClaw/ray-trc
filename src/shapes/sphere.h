@@ -2,6 +2,7 @@
 #define _SPHERE_H_
 
 #include "hitdata.h"
+#include "aabb.h"
 
 class Sphere 
 {
@@ -10,7 +11,10 @@ class Sphere
 
         // Check if ray hits the sphere at time tmin<=t<=tmax,
         // and if so, return true and update last argument.
-        bool hit(const Ray &ray, double tmin, double tmax, HitData &result);
+        bool hit(const Ray &ray, double tmin, double tmax, HitData &result) const;
+
+        // Calculates a bounding box
+        AABB bounding() const;
 
     private:
         Point center;
