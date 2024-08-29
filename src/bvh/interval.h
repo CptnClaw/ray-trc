@@ -24,6 +24,7 @@ class Interval
         Interval operator|(const Interval &J) const; 
         Interval& operator|=(const Interval &J);
         
+        double length() const;
         bool contains(double t) const;
         bool is_empty() const;
         

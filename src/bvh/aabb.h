@@ -8,6 +8,7 @@
 class AABB
 {
     public:
+        AABB() = default; // Empty box
         AABB(const Interval &xaxis, const Interval &yaxis, const Interval &zaxis);
 
         // Check if ray hits this box
@@ -15,6 +16,9 @@ class AABB
 
         // Enlarge this box so that it also contains other
         AABB& operator|=(const AABB &other);
+        
+        // Return the axis (0, 1, or 2) whose side is the longest
+        int longest_axis() const;
         
     private:
         Interval intervals[3];

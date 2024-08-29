@@ -185,3 +185,8 @@ bool Interval::is_empty() const
 {
     return !is_special || type != Set::EMPTY;
 }
+
+double Interval::length() const
+{
+    return end - start;
+}

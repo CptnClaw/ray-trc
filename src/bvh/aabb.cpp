@@ -63,3 +63,17 @@ AABB& AABB::operator|=(const AABB &other)
     }
     return *this;
 }
+
+int AABB::longest_axis() const
+{
+    double lengths[3] = {intervals[0].length(), intervals[1].length(), intervals[2].length()};
+    if (lengths[0] > lengths[1] && lengths[0] > lengths[2])
+    {
+        return 0;
+    }
+    if (lengths[1] > lengths[0] && lengths[1] > lengths[2])
+    {
+        return 1;
+    }
+    return 2;
+}
