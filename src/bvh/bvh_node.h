@@ -6,10 +6,14 @@
 #include "sphere.h"
 #include "ray.h"
 
+// When a node gets this number of spheres or less,
+// do not create further nodes 
+#define MAX_SPHERES_IN_LEAF 4
+
 class BVHNode
 {
     public:
-        BVHNode(std::vector<shared_ptr<Sphere>> objs);
+        BVHNode(const std::vector<shared_ptr<Sphere>> &objs, int max_depth);
         bool hit(const Ray &ray, double tmin, double tmax, HitData &result) const;
     private:
         AABB box;

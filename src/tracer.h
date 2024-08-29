@@ -7,6 +7,9 @@
 #include "ray.h"
 #include "sphere.h"
 #include "random.h"
+#include "bvh_node.h"
+
+#define BVH_MAX_DEPTH   10
 
 using std::shared_ptr;
 
@@ -16,7 +19,7 @@ class Tracer
         Tracer();
         Color calc_color(const Ray &ray, int max_depth);
     private:
-        std::vector<shared_ptr<Sphere>> objs;
+        shared_ptr<BVHNode> bvh;
         Color sky_blue;
         
         void CreateMyScene();

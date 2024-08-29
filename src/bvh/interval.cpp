@@ -183,10 +183,15 @@ bool Interval::contains(double t) const
 
 bool Interval::is_empty() const
 {
-    return !is_special || type != Set::EMPTY;
+    return is_special && type == Set::EMPTY;
 }
 
 double Interval::length() const
 {
     return end - start;
+}
+
+double Interval::mid_point() const
+{
+    return (end + start) / 2;
 }

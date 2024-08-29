@@ -16,9 +16,10 @@ class Sphere
         // Calculates a bounding box
         AABB bounding() const;
 
-    private:
         Point center;
         double radius;
+
+    private:
         shared_ptr<Material> material;
 };
 

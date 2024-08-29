@@ -1,15 +1,41 @@
 #include "bvh_node.h"
 
-BVHNode::BVHNode(std::vector<shared_ptr<Sphere>> objs)
+BVHNode::BVHNode(const std::vector<shared_ptr<Sphere>> &objs, int max_depth)
 {
+    // Create bounding box containing all spheres
     for (shared_ptr<Sphere> s : objs)
     {
-        box |= s->bounding();
+        AABB cur_box = s->bounding();
+        box |= cur_box;
     }
-    int axis = box.longest_axis();
-    // TODO: Divide axis
-    left = new BVHNode(objs);  // Send one half to left
-    right = new BVHNode(objs);  // Send other half to right
+
+    // Check if leaf or internal node
+    if (objs.size() <= MAX_SPHERES_IN_LEAF || max_depth == 0)
+    {
+        // This is a leaf
+        spheres = objs;
+    }
+    else
+    {
+        // This is an internal node
+        // Split spheres to two sets according to mid point of longest axis
+        int axis = box.longest_axis();
+        double mid_point = box.mid_point(axis);
+        std::vector<shared_ptr<Sphere>> left_objs, right_objs;
+        for (shared_ptr<Sphere> s : objs)
+        {
+            if (s->center[axis] < mid_point)
+            {
+                left_objs.push_back(s);
+            }
+            else
+            {
+                right_objs.push_back(s);
+            }
+        }
+        left = new BVHNode(left_objs, max_depth-1);  // Send one half to left
+        right = new BVHNode(right_objs, max_depth-1); // Send other half to right
+    }
 }
 
 bool BVHNode::hit(const Ray &ray, double tmin, double tmax, HitData &result) const

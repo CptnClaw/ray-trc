@@ -3,7 +3,7 @@
 AABB::AABB(const Interval &xaxis, const Interval &yaxis, const Interval &zaxis)
 {
     intervals[0] = xaxis;
-    intervals[3] = yaxis;
+    intervals[1] = yaxis;
     intervals[2] = zaxis;
 }
 
@@ -32,7 +32,7 @@ bool AABB::hit(const Ray &ray, double tmin, double tmax) const
         }
 
         // Check if ray is degenarate
-        if (direction[axis] < EPSILON)
+        if (std::fabs(direction[axis]) < EPSILON)
         {
             // Ray is stationary in this axis
             if (intervals[axis].contains(origin[axis]))
@@ -76,4 +76,9 @@ int AABB::longest_axis() const
         return 1;
     }
     return 2;
+}
+
+double AABB::mid_point(int axis) const
+{
+    return intervals[axis].mid_point();
 }
