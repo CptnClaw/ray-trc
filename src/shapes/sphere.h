@@ -21,6 +21,7 @@ class Sphere
 
     private:
         shared_ptr<Material> material;
+        AABB box;
 };
 
 

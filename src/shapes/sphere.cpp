@@ -5,7 +5,16 @@
 using std::shared_ptr;
 
 Sphere::Sphere(const Point &center, double radius, shared_ptr<Material> material)
-                : center(center), radius(radius), material(material) {}
+                : center(center), radius(radius), material(material)
+{
+    Interval spans[3];
+    for (int axis = 0; axis < 3; axis++)
+    {
+        double c = center[axis];
+        spans[axis] = Interval(c - radius, c + radius);
+    }
+    box = AABB(spans[0], spans[1], spans[2]);
+}
 
 bool Sphere::hit(const Ray &ray, double tmin, double tmax, HitData &result) const
 {
@@ -42,11 +51,5 @@ bool Sphere::hit(const Ray &ray, double tmin, double tmax, HitData &result) cons
 
 AABB Sphere::bounding() const
 {
-    Interval spans[3];
-    for (int axis=0; axis<3; axis++)
-    {
-        double c = center[axis];
-        spans[axis] = Interval(c-radius, c+radius);
-    }
-    return AABB(spans[0], spans[1], spans[2]);
+    return box;
 }

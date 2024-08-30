@@ -8,7 +8,7 @@
 
 // When a node gets this number of spheres or less,
 // do not create further nodes 
-#define MAX_SPHERES_IN_LEAF 4
+#define MAX_SPHERES_IN_LEAF 10
 
 class BVHNode
 {
