@@ -13,27 +13,22 @@ class Interval
 {
     public:
         Interval(double start, double end); // Use to build finite volume intervals
-        Interval(Set type); // Use to build infinite-volume or empty intervals
         Interval(); // Default constructor is for empty intervals
         
-        // Calculates the largest interval contained in both (intersection)
-        Interval operator&(const Interval &J) const;
-        Interval& operator&=(const Interval &J);
+        // Intersects this interval with another interval.
+        // Returns true if the result is empty.
+        bool intersect(const Interval &other);
         
-        // Calculates the smallest interval containing both (convex hull of union)
-        Interval operator|(const Interval &J) const; 
-        Interval& operator|=(const Interval &J);
+        // Enlarges this interval to also encompass another interval (convex hull of union).
+        void enlarge(const Interval &other);
         
-        double length() const;
-        double mid_point() const;
         bool contains(double t) const;
-        bool is_empty() const;
+        double length() const;
+        double mid_point() const; // Do not call this function on an empty interval
         
         double start;
         double end;
-
-        bool is_special; // True if interval equals one the types defined in the enum Set.
-        Set type;
+        bool is_empty;
 };
 
 

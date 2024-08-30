@@ -5,8 +5,7 @@ BVHNode::BVHNode(const std::vector<shared_ptr<Sphere>> &objs, int max_depth)
     // Create bounding box containing all spheres
     for (shared_ptr<Sphere> s : objs)
     {
-        AABB cur_box = s->bounding();
-        box |= cur_box;
+        box.enlarge(s->bounding());
     }
 
     // Check if leaf or internal node
@@ -14,6 +13,8 @@ BVHNode::BVHNode(const std::vector<shared_ptr<Sphere>> &objs, int max_depth)
     {
         // This is a leaf
         spheres = objs;
+        left = nullptr;
+        right = nullptr;
     }
     else
     {
@@ -36,6 +37,12 @@ BVHNode::BVHNode(const std::vector<shared_ptr<Sphere>> &objs, int max_depth)
         left = new BVHNode(left_objs, max_depth-1);  // Send one half to left
         right = new BVHNode(right_objs, max_depth-1); // Send other half to right
     }
+}
+
+BVHNode::~BVHNode()
+{
+    if (left != nullptr) delete left;
+    if (right != nullptr) delete right;
 }
 
 bool BVHNode::hit(const Ray &ray, double tmin, double tmax, HitData &result) const

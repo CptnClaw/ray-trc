@@ -14,8 +14,8 @@ class AABB
         // Check if ray hits this box
         bool hit(const Ray &ray, double tmin, double tmax) const;
 
-        // Enlarge this box so that it also contains other
-        AABB& operator|=(const AABB &other);
+        // Enlarge this box so that it also contains other (convex hull of union)
+        void enlarge(const AABB &other);
         
         // Return the axis (0, 1, or 2) whose side is the longest
         int longest_axis() const;

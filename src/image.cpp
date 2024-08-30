@@ -42,7 +42,7 @@ bool Image::render(int samples_per_pixel, int ray_bounce_limit)
     for (int y = 0; y < height; y++)
     {
         // Print progress bar
-        if (y % 50 == 0)
+        if (y % 100 == 0)
         {
             std::clog << (height - y) << " scanlines remaining" << std::endl;
         }

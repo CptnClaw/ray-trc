@@ -14,23 +14,6 @@ bool AABB::hit(const Ray &ray, double tmin, double tmax) const
     Interval hit_t(tmin, tmax);
     for (int axis=0; axis<3; axis++)
     {
-        // Check if interval is degenerate
-        if (intervals[axis].is_special)
-        {
-            switch (intervals[axis].type)
-            {
-            case Set::REAL_LINE:
-                // Ray is always in the real numbers
-                continue;
-            case Set::EMPTY:
-                // Ray is never in an empty set
-                return false;
-            default:
-                std::cerr << "Error: Invalid interval type" << std::endl; 
-                return false;
-            }
-        }
-
         // Check if ray is degenarate
         if (std::fabs(direction[axis]) < EPSILON)
         {
@@ -50,18 +33,22 @@ bool AABB::hit(const Ray &ray, double tmin, double tmax) const
         // Intersect full hit interval with the hit times of current axis
         double start_t = (intervals[axis].start - origin[axis]) / direction[axis];
         double end_t = (intervals[axis].end - origin[axis]) / direction[axis];
-        hit_t &= Interval(std::min(start_t, end_t), std::max(start_t, end_t));
+        if (hit_t.intersect(Interval(start_t, end_t)))
+        {
+            return false;
+        }
     }
-    return !hit_t.is_empty();
+    
+    // If got here, no intersection has become empty, so hit_t must be non-empty
+    return true;
 }
 
-AABB& AABB::operator|=(const AABB &other)
+void AABB::enlarge(const AABB &other)
 {
     for (int axis=0; axis<3; axis++)
     {
-        this->intervals[axis] |= other.intervals[axis];
+        intervals[axis].enlarge(other.intervals[axis]);
     }
-    return *this;
 }
 
 int AABB::longest_axis() const
