@@ -9,8 +9,8 @@
 #define VFOV            (PI / 4)
 #define ASPECT_RATIO    (4.0 / 3.0)
 
-#define SAMPLES_PER_PIXEL 100
-#define RAY_BOUNCE_LIMIT 50
+#define SAMPLES_PER_PIXEL 20
+#define RAY_BOUNCE_LIMIT 10
 
 #define ROTATIONS 1
 
@@ -31,10 +31,10 @@ int main(int argc, char **argv)
     (void)argv; // Mark as unused
     
     // Define camera position
-    Point look_from(0, 0, 2);
-    Point look_at(0, 0, -1.5);
+    Point look_from(13, 2, 13);
+    Point look_at;
     Vec3 vup(0, 1, 0);
-    double lens_cone_angle = PI / 100.0;
+    double lens_cone_angle = PI / 500.0;
 
     if (are_parallel(look_at - look_from, vup))
     {

@@ -12,7 +12,7 @@ enum class Set
 class Interval
 {
     public:
-        Interval(double start, double end); // Use to build finite volume intervals
+        Interval(float start, float end); // Use to build finite volume intervals
         Interval(); // Default constructor is for empty intervals
         
         // Intersects this interval with another interval.
@@ -22,12 +22,12 @@ class Interval
         // Enlarges this interval to also encompass another interval (convex hull of union).
         void enlarge(const Interval &other);
         
-        bool contains(double t) const;
-        double length() const;
-        double mid_point() const; // Do not call this function on an empty interval
+        bool contains(float t) const;
+        float length() const;
+        float mid_point() const; // Do not call this function on an empty interval
         
-        double start;
-        double end;
+        float start;
+        float end;
         bool is_empty;
 };
 

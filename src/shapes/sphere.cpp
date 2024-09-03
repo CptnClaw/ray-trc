@@ -16,7 +16,7 @@ Sphere::Sphere(const Point &center, double radius, shared_ptr<Material> material
     box = AABB(spans[0], spans[1], spans[2]);
 }
 
-bool Sphere::hit(const Ray &ray, double tmin, double tmax, HitData &result) const
+bool Sphere::hit(const Ray &ray, double tmin, HitData &result) const
 {
     // Quadratic data
     double a = ray.direction().norm2();
@@ -33,10 +33,10 @@ bool Sphere::hit(const Ray &ray, double tmin, double tmax, HitData &result) cons
     // Find its time and check if it falls in range
     double sqrt_discr = std::sqrt(discriminant);
     double hit_t = (h - sqrt_discr) / a;
-    if (hit_t < tmin || tmax < hit_t)
+    if (hit_t < tmin || result.hit_time < hit_t)
     {
         hit_t = (h + sqrt_discr) / a;
-        if (hit_t < tmin || tmax < hit_t)
+        if (hit_t < tmin || result.hit_time < hit_t)
         {
             return false;
         }

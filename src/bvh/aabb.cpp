@@ -14,6 +14,10 @@ bool AABB::hit(const Ray &ray, double tmin, double tmax) const
     Interval hit_t(tmin, tmax);
     for (int axis=0; axis<3; axis++)
     {
+        Interval I = intervals[axis];
+        double o = origin[axis];
+        double d = direction[axis];
+
         // Check if ray is degenarate
         if (std::fabs(direction[axis]) < EPSILON)
         {
@@ -31,15 +35,16 @@ bool AABB::hit(const Ray &ray, double tmin, double tmax) const
         }
         
         // Intersect full hit interval with the hit times of current axis
-        double start_t = (intervals[axis].start - origin[axis]) / direction[axis];
-        double end_t = (intervals[axis].end - origin[axis]) / direction[axis];
+        double dinv = 1.0 / d;
+        double start_t = (I.start - o) * dinv;
+        double end_t = (I.end - o) * dinv;
         if (hit_t.intersect(Interval(start_t, end_t)))
         {
             return false;
         }
     }
     
-    // If got here, no intersection has become empty, so hit_t must be non-empty
+    // If got here, no intersection has been found empty, so hit_t must be non-empty
     return true;
 }
 

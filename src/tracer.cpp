@@ -12,7 +12,7 @@ using std::make_shared;
 
 Tracer::Tracer()
 {
-    CreateMyScene();
+    CreateBookFinalScene();
 }
 
 void Tracer::CreateMyScene()
@@ -122,7 +122,8 @@ Color Tracer::calc_color(const Ray &ray, int max_depth)
     if (max_depth > 0)
     {
         HitData closest_hit;
-        if (bvh->hit(ray, MIN_T, MAX_T, closest_hit))
+        closest_hit.hit_time = MAX_T;
+        if (bvh->hit(ray, MIN_T, closest_hit))
         {
             Ray scattered;
             Color attenuation;

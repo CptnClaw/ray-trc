@@ -15,7 +15,7 @@ class BVHNode
     public:
         BVHNode(const std::vector<shared_ptr<Sphere>> &objs, int max_depth);
         ~BVHNode();
-        bool hit(const Ray &ray, double tmin, double tmax, HitData &result) const;
+        bool hit(const Ray &ray, double tmin, HitData &result) const;
     private:
         AABB box;
         BVHNode *left;

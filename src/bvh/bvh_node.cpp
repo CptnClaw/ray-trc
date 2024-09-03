@@ -45,9 +45,9 @@ BVHNode::~BVHNode()
     if (right != nullptr) delete right;
 }
 
-bool BVHNode::hit(const Ray &ray, double tmin, double tmax, HitData &result) const
+bool BVHNode::hit(const Ray &ray, double tmin, HitData &result) const
 {
-    if (!box.hit(ray, tmin, tmax)) 
+    if (!box.hit(ray, tmin, result.hit_time)) 
     {
         return false;
     }
@@ -55,42 +55,16 @@ bool BVHNode::hit(const Ray &ray, double tmin, double tmax, HitData &result) con
     // If node has spheres, it is a leaf, so the recursion ends here
     if (!spheres.empty())
     {
-        result.hit_time = tmax;
+        bool hit_found = false;
         for (shared_ptr<Sphere> s : spheres)
         {
-            HitData hd;
-            if (s->hit(ray, tmin, result.hit_time, hd))
-            {
-                result = hd;
-            }
+            hit_found = s->hit(ray, tmin, result) || hit_found;
         }
-        return result.hit_time < tmax;
+        return hit_found;
     }
 
     // Node is not a leaf, keep recursing down the tree
-    HitData left_data, right_data;
-    bool left_hit = left->hit(ray, tmin, tmax, left_data);
-    double new_tmax = left_hit ? left_data.hit_time : tmax;
-    bool right_hit = right->hit(ray, tmin, new_tmax, right_data);
-    if (!left_hit && !right_hit)
-    {
-        return false;
-    }
-    if (left_hit && right_hit)
-    {
-        if (left_data.hit_time < right_data.hit_time)
-        {
-            result = left_data;
-            return true;
-        }
-        result = right_data;
-        return true;
-    }
-    if (left_hit)
-    {
-        result = left_data;
-        return true;
-    }
-    result = right_data;
-    return true;
+    bool left_hit = left->hit(ray, tmin, result);
+    bool right_hit = right->hit(ray, tmin, result);
+    return left_hit || right_hit;
 }
