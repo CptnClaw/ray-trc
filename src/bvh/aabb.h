@@ -19,7 +19,7 @@ class AABB
         
         // Return the axis (0, 1, or 2) whose side is the longest
         int longest_axis() const;
-        double mid_point(int axis) const;
+        float mid_point(int axis) const;
         
     private:
         Interval intervals[3];

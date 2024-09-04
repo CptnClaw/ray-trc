@@ -10,16 +10,38 @@
 // do not create further nodes 
 #define MAX_SPHERES_IN_LEAF 10
 
+// Number of nodes in BVH are at most 2^BVH_MAX_DEPTH
+#define BVH_MAX_DEPTH   10
+#define BVH_TREE_SIZE   1 << BVH_MAX_DEPTH
+
+
+// A node could be either internal (having other nodes as children) or a leaf (having spheres as children).
+// Internal node:
+//      first_child - Index of right child. Note that saving the index of the left child is redundant, since it is always +1 from its parent.
+//      num_spheres - Always zero.
+// Leaf:
+//      first_child - Index of the first sphere associated to this leaf.
+//      num_spheres - Number of spheres associated to this leaf, so the index of the last sphere is first_child+num_spheres-1 (inclusive).
 class BVHNode
 {
     public:
-        BVHNode(const std::vector<shared_ptr<Sphere>> &objs, int max_depth);
-        ~BVHNode();
+        AABB box; 
+        uint first_child; 
+        uint num_spheres;
+};
+
+class BVHTree
+{
+    public:
+        BVHTree(const std::vector<shared_ptr<Sphere>> &objs);
         bool hit(const Ray &ray, double tmin, HitData &result) const;
+
     private:
-        AABB box;
-        BVHNode *left;
-        BVHNode *right;
+        uint build_subtree(uint tree_depth, uint node_idx, uint first_sphere, uint num_spheres);
+        bool hit_node(uint node_idx, const Ray &ray, double tmin, HitData &result) const;
+
+        BVHNode nodes[BVH_TREE_SIZE];
+        uint size;
         std::vector<shared_ptr<Sphere>> spheres;
 };
 

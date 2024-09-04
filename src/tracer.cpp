@@ -15,6 +15,11 @@ Tracer::Tracer()
     CreateBookFinalScene();
 }
 
+Tracer::~Tracer()
+{
+    delete (bvh);
+}
+
 void Tracer::CreateMyScene()
 {
     sky_blue = Color(0.1, 0.3, 1.0);
@@ -48,7 +53,7 @@ void Tracer::CreateMyScene()
     objs.push_back(make_shared<Sphere>(Point(0, -0.5, -1), 0.25, glass));
     objs.push_back(make_shared<Sphere>(Point(0, -0.5, -1), 0.2, bubble));
     
-    this->bvh = make_shared<BVHNode>(objs, BVH_MAX_DEPTH);
+    bvh = new BVHTree(objs);
 }
 
 void Tracer::CreateBookScene()
@@ -65,7 +70,7 @@ void Tracer::CreateBookScene()
     objs.push_back(make_shared<Sphere>(Point(-1.0,    0.0, -1.0),   0.5, material_left));
     objs.push_back(make_shared<Sphere>(Point(-1.0,    0.0, -1.0),   0.4, material_bubble));
     objs.push_back(make_shared<Sphere>(Point( 1.0,    0.0, -1.0),   0.5, material_right));
-    this->bvh = make_shared<BVHNode>(objs, BVH_MAX_DEPTH);
+    bvh = new BVHTree(objs);
 }
 
 void Tracer::CreateBookFinalScene()
@@ -114,7 +119,7 @@ void Tracer::CreateBookFinalScene()
     auto material3 = Material::CreateMetal(Color(0.7, 0.6, 0.5), 0.0);
     objs.push_back(make_shared<Sphere>(Point(4, 1, 0), 1.0, material3));
     
-    bvh = make_shared<BVHNode>(objs, BVH_MAX_DEPTH);
+    bvh = new BVHTree(objs);
 }
 
 Color Tracer::calc_color(const Ray &ray, int max_depth)

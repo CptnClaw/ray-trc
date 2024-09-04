@@ -9,18 +9,17 @@
 #include "random.h"
 #include "bvh_node.h"
 
-#define BVH_MAX_DEPTH   10
-
 using std::shared_ptr;
 
 class Tracer
 {
     public:
         Tracer();
+        ~Tracer();
         Color calc_color(const Ray &ray, int max_depth);
     private:
-        shared_ptr<BVHNode> bvh;
         Color sky_blue;
+        BVHTree *bvh;
         
         void CreateMyScene();
         void CreateBookScene();

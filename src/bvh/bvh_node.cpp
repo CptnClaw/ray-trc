@@ -1,70 +1,108 @@
+#include <array>
+#include <stack>
+#include <algorithm>
 #include "bvh_node.h"
 
-BVHNode::BVHNode(const std::vector<shared_ptr<Sphere>> &objs, int max_depth)
+#include <iostream>
+
+bool compare_spheres_x(const shared_ptr<Sphere>& a, const shared_ptr<Sphere>& b)
 {
-    // Create bounding box containing all spheres
-    for (shared_ptr<Sphere> s : objs)
+    return a->center[0] < b->center[0];
+}
+
+bool compare_spheres_y(const shared_ptr<Sphere>& a, const shared_ptr<Sphere>& b)
+{
+    return a->center[1] < b->center[1];
+}
+
+bool compare_spheres_z(const shared_ptr<Sphere>& a, const shared_ptr<Sphere>& b)
+{
+    return a->center[2] < b->center[2];
+}
+bool (*compare_spheres[3])(const shared_ptr<Sphere> &, const shared_ptr<Sphere> &) = {compare_spheres_x, compare_spheres_y, compare_spheres_z};
+
+
+BVHTree::BVHTree(const std::vector<shared_ptr<Sphere>> &objs) : spheres(objs) 
+{
+    uint last_node_idx = build_subtree(0, 0, 0, spheres.size());
+    size = last_node_idx + 1;
+}
+
+uint BVHTree::build_subtree(uint tree_depth, uint node_idx, uint first_sphere, uint num_spheres)
+{
+    BVHNode &node = nodes[node_idx];
+
+    // Calculate bounding box of current sphere range
+    uint after_last_sphere = first_sphere + num_spheres;
+    for (uint i = first_sphere; i < after_last_sphere; i++)
     {
-        box.enlarge(s->bounding());
+        node.box.enlarge(spheres[i]->bounding());
     }
 
-    // Check if leaf or internal node
-    if (objs.size() <= MAX_SPHERES_IN_LEAF || max_depth == 0)
+    // Check if node is leaf or internal node
+    if (num_spheres <= MAX_SPHERES_IN_LEAF || tree_depth + 1 == BVH_MAX_DEPTH)
     {
         // This is a leaf
-        spheres = objs;
-        left = nullptr;
-        right = nullptr;
+        node.first_child = first_sphere;
+        node.num_spheres = num_spheres;
+        return node_idx;
     }
     else
     {
         // This is an internal node
-        // Split spheres to two sets according to mid point of longest axis
-        int axis = box.longest_axis();
-        double mid_point = box.mid_point(axis);
-        std::vector<shared_ptr<Sphere>> left_objs, right_objs;
-        for (shared_ptr<Sphere> s : objs)
+        node.num_spheres = 0;
+
+        // Split spheres to two sets according to longest axis
+        int axis = node.box.longest_axis();
+        auto begin_itr = std::begin(spheres) + first_sphere;
+        auto end_itr = std::begin(spheres) + after_last_sphere;
+        std::sort(begin_itr, end_itr, compare_spheres[axis]);
+        uint num_left_spheres = uint(num_spheres * 0.5);
+        float threshold = node.box.mid_point(axis);
+        for (uint i = first_sphere+1; i < after_last_sphere; i++)
         {
-            if (s->center[axis] < mid_point)
+            double value = spheres[i]->center[axis];
+            if (value >= threshold)
             {
-                left_objs.push_back(s);
-            }
-            else
-            {
-                right_objs.push_back(s);
+                num_left_spheres = i - first_sphere;
+                break;
             }
         }
-        left = new BVHNode(left_objs, max_depth-1);  // Send one half to left
-        right = new BVHNode(right_objs, max_depth-1); // Send other half to right
+
+        // Build left and right subtrees
+        uint last_node = build_subtree(tree_depth + 1, node_idx + 1, first_sphere, num_left_spheres);
+        node.first_child = last_node + 1; // depth-first ordering
+        return build_subtree(tree_depth + 1, node.first_child, first_sphere + num_left_spheres, num_spheres - num_left_spheres);
+        
     }
 }
 
-BVHNode::~BVHNode()
+bool BVHTree::hit(const Ray &ray, double tmin, HitData &result) const
 {
-    if (left != nullptr) delete left;
-    if (right != nullptr) delete right;
+    return hit_node(0, ray, tmin, result);
 }
 
-bool BVHNode::hit(const Ray &ray, double tmin, HitData &result) const
+bool BVHTree::hit_node(uint node_idx, const Ray &ray, double tmin, HitData &result) const
 {
-    if (!box.hit(ray, tmin, result.hit_time)) 
+    BVHNode node = nodes[node_idx];
+    if (!node.box.hit(ray, tmin, result.hit_time)) 
     {
         return false;
     }
 
-    // If node has spheres, it is a leaf, so the recursion ends here
-    if (!spheres.empty())
+    // If node is a leaf, it has spheres and the recursion ends here
+    if (node.num_spheres != 0)
     {
-        bool hit_found = false;
-        for (shared_ptr<Sphere> s : spheres)
+        bool found_hit = false;
+        for (uint i = node.first_child; i < node.first_child + node.num_spheres; i++)
         {
-            hit_found = s->hit(ray, tmin, result) || hit_found;
+            found_hit = spheres[i]->hit(ray, tmin, result) || found_hit;
         }
-        return hit_found;
+        return found_hit;
     }
 
     // Node is not a leaf, keep recursing down the tree
-    bool left_hit = left->hit(ray, tmin, result);
-    bool right_hit = right->hit(ray, tmin, result);
+    bool left_hit = hit_node(node_idx + 1, ray, tmin, result);
+    bool right_hit = hit_node(node.first_child, ray, tmin, result);
     return left_hit || right_hit;
 }

@@ -70,7 +70,7 @@ int AABB::longest_axis() const
     return 2;
 }
 
-double AABB::mid_point(int axis) const
+float AABB::mid_point(int axis) const
 {
     return intervals[axis].mid_point();
 }
