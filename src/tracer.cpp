@@ -17,7 +17,7 @@ Tracer::Tracer()
 
 Tracer::~Tracer()
 {
-    delete (bvh);
+    delete bvh;
 }
 
 void Tracer::CreateMyScene()

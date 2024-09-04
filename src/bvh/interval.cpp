@@ -3,7 +3,6 @@
 
 Interval::Interval(float start, float end) 
 {
-    is_empty = false;
     if (start < end)
     {
         this->start = start;
@@ -11,19 +10,23 @@ Interval::Interval(float start, float end)
     }
     else
     {
+        // Note this constructor is NOT for empty intervals, so flip coordinates if necessary
         this->start = end;
         this->end = start;
     }
 }
 
-Interval::Interval() : is_empty(true) {}
+Interval::Interval() 
+{
+    make_empty();
+}
 
 bool Interval::intersect(const Interval &other)
 {
     // Check if either of the intervals are empty
-    if (is_empty || other.is_empty)
+    if (is_empty() || other.is_empty())
     {
-        is_empty = true;
+        make_empty();
         return true;
     }
     
@@ -32,33 +35,48 @@ bool Interval::intersect(const Interval &other)
     float min_end = std::min(end, other.end);
     if (max_start <= min_end)
     {
+        // There is a non-trivial intersection
         start = max_start;
         end = min_end;
         return false;
     }
-    is_empty = true;
+    
+    // Intersection is trivial
+    make_empty();
     return true;
 }
 
 void Interval::enlarge(const Interval &other)
 {
     // Verify that other is non-empty (otherwise there is nothing to do)
-    if (!other.is_empty)
+    if (!other.is_empty())
     {
-        if (other.start < start || is_empty) start = other.start;
-        if (end < other.end || is_empty) end = other.end;
-        is_empty = false;
+        if (other.start < start || is_empty()) start = other.start;
+        if (end < other.end || is_empty()) end = other.end;
     }
 }
 
 bool Interval::contains(float t) const
 {
-    return !is_empty && start <= t && t <= end;
+    return !is_empty() && start <= t && t <= end;
+}
+
+void Interval::make_empty() 
+{
+    // An interval is considered empty iff start > end.
+    start = 1;
+    end = 0;
+}
+
+bool Interval::is_empty() const
+{
+    // See function void make_empty()
+    return start > end;
 }
 
 float Interval::length() const
 {
-    if (is_empty) 
+    if (is_empty()) 
     {
         return 0;
     }

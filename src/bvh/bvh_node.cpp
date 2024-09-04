@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <array>
 #include <stack>
 #include <algorithm>
@@ -24,10 +25,18 @@ bool (*compare_spheres[3])(const shared_ptr<Sphere> &, const shared_ptr<Sphere> 
 
 BVHTree::BVHTree(const std::vector<shared_ptr<Sphere>> &objs) : spheres(objs) 
 {
+    std::cout << "sizeof(BVHNode): " << sizeof(BVHNode) << std::endl;
+    // nodes = static_cast<BVHNode*>(std::aligned_alloc(64, sizeof(BVHNode) * BVH_TREE_SIZE));
+    nodes = new BVHNode[BVH_TREE_SIZE];
     uint last_node_idx = build_subtree(0, 0, 0, spheres.size());
     size = last_node_idx + 1;
+    std::cout << "BVH Size: " << size << std::endl;
 }
 
+BVHTree::~BVHTree()
+{
+    delete[] nodes;
+}
 uint BVHTree::build_subtree(uint tree_depth, uint node_idx, uint first_sphere, uint num_spheres)
 {
     BVHNode &node = nodes[node_idx];
@@ -43,7 +52,7 @@ uint BVHTree::build_subtree(uint tree_depth, uint node_idx, uint first_sphere, u
     if (num_spheres <= MAX_SPHERES_IN_LEAF || tree_depth + 1 == BVH_MAX_DEPTH)
     {
         // This is a leaf
-        node.first_child = first_sphere;
+        node.child_idx = first_sphere;
         node.num_spheres = num_spheres;
         return node_idx;
     }
@@ -71,8 +80,8 @@ uint BVHTree::build_subtree(uint tree_depth, uint node_idx, uint first_sphere, u
 
         // Build left and right subtrees
         uint last_node = build_subtree(tree_depth + 1, node_idx + 1, first_sphere, num_left_spheres);
-        node.first_child = last_node + 1; // depth-first ordering
-        return build_subtree(tree_depth + 1, node.first_child, first_sphere + num_left_spheres, num_spheres - num_left_spheres);
+        node.child_idx = last_node + 1; // depth-first ordering
+        return build_subtree(tree_depth + 1, node.child_idx, first_sphere + num_left_spheres, num_spheres - num_left_spheres);
         
     }
 }
@@ -94,7 +103,7 @@ bool BVHTree::hit_node(uint node_idx, const Ray &ray, double tmin, HitData &resu
     if (node.num_spheres != 0)
     {
         bool found_hit = false;
-        for (uint i = node.first_child; i < node.first_child + node.num_spheres; i++)
+        for (uint i = node.child_idx; i < node.child_idx + node.num_spheres; i++)
         {
             found_hit = spheres[i]->hit(ray, tmin, result) || found_hit;
         }
@@ -103,6 +112,6 @@ bool BVHTree::hit_node(uint node_idx, const Ray &ray, double tmin, HitData &resu
 
     // Node is not a leaf, keep recursing down the tree
     bool left_hit = hit_node(node_idx + 1, ray, tmin, result);
-    bool right_hit = hit_node(node.first_child, ray, tmin, result);
+    bool right_hit = hit_node(node.child_idx, ray, tmin, result);
     return left_hit || right_hit;
 }

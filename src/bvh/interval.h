@@ -26,9 +26,11 @@ class Interval
         float length() const;
         float mid_point() const; // Do not call this function on an empty interval
         
+        void make_empty(); // Turns this interval into an empty interval
+        bool is_empty() const; // Checks if this interval is empty
+        
         float start;
         float end;
-        bool is_empty;
 };
 
 

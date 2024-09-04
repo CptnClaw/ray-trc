@@ -25,8 +25,8 @@
 class BVHNode
 {
     public:
-        AABB box; 
-        uint first_child; 
+        AABB box;  // 24 bytes
+        uint child_idx; 
         uint num_spheres;
 };
 
@@ -34,13 +34,14 @@ class BVHTree
 {
     public:
         BVHTree(const std::vector<shared_ptr<Sphere>> &objs);
+        ~BVHTree();
         bool hit(const Ray &ray, double tmin, HitData &result) const;
 
     private:
         uint build_subtree(uint tree_depth, uint node_idx, uint first_sphere, uint num_spheres);
         bool hit_node(uint node_idx, const Ray &ray, double tmin, HitData &result) const;
 
-        BVHNode nodes[BVH_TREE_SIZE];
+        BVHNode *nodes;
         uint size;
         std::vector<shared_ptr<Sphere>> spheres;
 };
