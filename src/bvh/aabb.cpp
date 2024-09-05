@@ -10,32 +10,15 @@ AABB::AABB(const Interval &xaxis, const Interval &yaxis, const Interval &zaxis)
 bool AABB::hit(const Ray &ray, double tmin, double tmax) const
 {
     Point origin = ray.origin();
-    Vec3 direction = ray.direction();
+    Vec3 direction_inv = ray.direction_inv();
     Interval hit_t(tmin, tmax);
     for (int axis=0; axis<3; axis++)
     {
         Interval I = intervals[axis];
         double o = origin[axis];
-        double d = direction[axis];
+        double dinv = direction_inv[axis];
 
-        // Check if ray is degenarate
-        if (std::fabs(direction[axis]) < EPSILON)
-        {
-            // Ray is stationary in this axis
-            if (intervals[axis].contains(origin[axis]))
-            {
-                // Ray is always inside interval in this axis
-                continue;
-            }
-            else
-            {
-                // Ray is never inside interval in this axis
-                return false;
-            }
-        }
-        
         // Intersect full hit interval with the hit times of current axis
-        double dinv = 1.0 / d;
         double start_t = (I.start - o) * dinv;
         double end_t = (I.end - o) * dinv;
         if (hit_t.intersect(Interval(start_t, end_t)))
