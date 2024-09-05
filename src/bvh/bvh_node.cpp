@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <string.h>
 #include <array>
 #include <stack>
 #include <algorithm>
@@ -31,6 +32,13 @@ BVHTree::BVHTree(const std::vector<shared_ptr<Sphere>> &objs) : spheres(objs)
     uint last_node_idx = build_subtree(0, 0, 0, spheres.size());
     size = last_node_idx + 1;
     std::cout << "BVH Size: " << size << std::endl;
+    
+    int num_spheres = spheres.size();
+    primitives = static_cast<Sphere*>(malloc(sizeof(Sphere) * num_spheres));
+    for (int i = 0; i < num_spheres; i++)
+    {
+        memcpy(primitives+i, spheres[i].get(), sizeof(Sphere));
+    }
 }
 
 BVHTree::~BVHTree()
@@ -111,7 +119,7 @@ bool BVHTree::hit(const Ray &ray, double tmin, HitData &result) const
             // Node is a leaf, so it has spheres to check collision with, but no further child nodes to process
             for (uint i = node.child_idx; i < node.child_idx + node.num_spheres; i++)
             {
-                found_hit = spheres[i]->hit(ray, tmin, result) || found_hit;
+                found_hit = primitives[i].hit(ray, tmin, result) || found_hit;
             }
         }
         else

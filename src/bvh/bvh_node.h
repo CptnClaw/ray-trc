@@ -43,6 +43,7 @@ class BVHTree
         BVHNode *nodes;
         uint size;
         std::vector<shared_ptr<Sphere>> spheres;
+        Sphere *primitives;
 };
 
 #endif // _BVH_NODE_H_
