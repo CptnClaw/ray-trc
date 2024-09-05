@@ -8,22 +8,21 @@
 #include "sphere.h"
 #include "random.h"
 #include "bvh_node.h"
+#include "viewport.h"
 
 using std::shared_ptr;
 
 class Tracer
 {
     public:
-        Tracer();
-        ~Tracer();
-        Color calc_color(const Ray &ray, int max_depth);
+        Tracer(BVHTree *bvh, Color sky_blue);
+        void render(Viewport &view, int samples_per_pixel, int ray_bounce_limit, int tile_size);
+
     private:
-        Color sky_blue;
         BVHTree *bvh;
+        Color sky_blue;
         
-        void CreateMyScene();
-        void CreateBookScene();
-        void CreateBookFinalScene();
+        Color calc_color(const Ray &ray, int max_depth);
 };
 
 #endif // _TRACER_H_ 

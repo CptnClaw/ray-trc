@@ -15,22 +15,34 @@ class Viewport
         // vertical_fov (field of view) is the angle (in radians) between the upper and lower edges of the viewport.
         Viewport(int screen_width, double aspect_ratio, double vertical_fov,
                 Point look_from, Point look_at, Vec3 vup, double lense_cone_angle);
+        ~Viewport();
         
         Ray get_ray(int x, int y);
+        void set_pixel(int x, int y, Color color);
+        Color get_pixel(int x, int y) const;
+
+        // Rotate look_from point around look_at point by a specific angle
+        void rotate_camera(double cosine, double sine);
 
         int screen_width;
         int screen_height;
 
     private:
-        
+        // This function updates variables common to constructor and to rotate_camera
+        void update_look_from(Point new_look_from);
+
         // Orthonormal basis of camera space. As conventional:
         // u points right.
         // v points up.
         // w points back.
-        Vec3 u,v,w;
+        Vec3 u, v, w;
 
         double viewport_width;
         double viewport_height;
+        
+        // (Re)initialization parameters
+        Point look_from, look_at;
+        Vec3 vup;
         
         // Origin of rays
         Point camera_center;
@@ -53,6 +65,9 @@ class Viewport
         
         // Location of center of top left pixel 
         Point first_pixel;
+        
+        // Frame buffer
+        Color *target;
 };
 
 

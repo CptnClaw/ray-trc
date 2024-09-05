@@ -83,7 +83,6 @@ uint BVHTree::build_subtree(uint tree_depth, uint node_idx, uint first_sphere, u
         uint last_node = build_subtree(tree_depth + 1, node_idx + 1, first_sphere, num_left_spheres);
         node.child_idx = last_node + 1; // depth-first ordering
         return build_subtree(tree_depth + 1, node.child_idx, first_sphere + num_left_spheres, num_spheres - num_left_spheres);
-        
     }
 }
 
