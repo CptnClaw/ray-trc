@@ -11,7 +11,7 @@
 #define MAX_SPHERES_IN_LEAF 10
 
 // Number of nodes in BVH are at most 2^BVH_MAX_DEPTH
-#define BVH_MAX_DEPTH   10
+#define BVH_MAX_DEPTH   8
 #define BVH_TREE_SIZE   1 << BVH_MAX_DEPTH
 
 
@@ -39,7 +39,6 @@ class BVHTree
 
     private:
         uint build_subtree(uint tree_depth, uint node_idx, uint first_sphere, uint num_spheres);
-        bool hit_node(uint node_idx, const Ray &ray, double tmin, HitData &result) const;
 
         BVHNode *nodes;
         uint size;

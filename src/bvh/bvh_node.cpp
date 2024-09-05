@@ -37,6 +37,7 @@ BVHTree::~BVHTree()
 {
     delete[] nodes;
 }
+
 uint BVHTree::build_subtree(uint tree_depth, uint node_idx, uint first_sphere, uint num_spheres)
 {
     BVHNode &node = nodes[node_idx];
@@ -88,30 +89,38 @@ uint BVHTree::build_subtree(uint tree_depth, uint node_idx, uint first_sphere, u
 
 bool BVHTree::hit(const Ray &ray, double tmin, HitData &result) const
 {
-    return hit_node(0, ray, tmin, result);
-}
-
-bool BVHTree::hit_node(uint node_idx, const Ray &ray, double tmin, HitData &result) const
-{
-    BVHNode node = nodes[node_idx];
-    if (!node.box.hit(ray, tmin, result.hit_time)) 
+    // Traverse flat tree iteratively using a stack.
+    // Each task contains the index of a node to traverse.
+    std::stack<uint> tasks;
+    tasks.push(0);
+    bool found_hit = false;
+    while (!tasks.empty())
     {
-        return false;
-    }
+        // Prepare task for processing current node
+        uint cur_task = tasks.top();
+        BVHNode node = nodes[cur_task];
+        tasks.pop();
 
-    // If node is a leaf, it has spheres and the recursion ends here
-    if (node.num_spheres != 0)
-    {
-        bool found_hit = false;
-        for (uint i = node.child_idx; i < node.child_idx + node.num_spheres; i++)
+        // Check if ray hits bounding box of current node
+        if (!node.box.hit(ray, tmin, result.hit_time))
         {
-            found_hit = spheres[i]->hit(ray, tmin, result) || found_hit;
+            continue;
         }
-        return found_hit;
-    }
 
-    // Node is not a leaf, keep recursing down the tree
-    bool left_hit = hit_node(node_idx + 1, ray, tmin, result);
-    bool right_hit = hit_node(node.child_idx, ray, tmin, result);
-    return left_hit || right_hit;
+        if (node.num_spheres != 0)
+        {
+            // Node is a leaf, so it has spheres to check collision with, but no further child nodes to process
+            for (uint i = node.child_idx; i < node.child_idx + node.num_spheres; i++)
+            {
+                found_hit = spheres[i]->hit(ray, tmin, result) || found_hit;
+            }
+        }
+        else
+        {
+            // Node is not a leaf, keep traversing down the tree
+            tasks.push(cur_task + 1); // Left child node
+            tasks.push(node.child_idx); // Right child node            
+        }
+    }
+    return found_hit;
 }
