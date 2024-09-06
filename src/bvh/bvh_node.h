@@ -14,10 +14,6 @@
 #define BVH_MAX_DEPTH   10
 #define BVH_TREE_SIZE   1 << BVH_MAX_DEPTH
 
-// Define to split bvh nodes using surface area heuristics.
-// Otherwise, split will be based on longest axis.
-// #define SPLIT_USING_SAH
-
 
 // A node could be either internal (having other nodes as children) or a leaf (having spheres as children).
 // Internal node:
@@ -44,10 +40,8 @@ class BVHTree
     private:
         uint build_subtree(uint tree_depth, uint node_idx, uint first_sphere, uint num_spheres);
 
-        // Choose axis and threshold to use for splitting bvh node.
-        // Split method is determined by the compiler definition of SPLIT_USING_SAH (see above).
+        // Choose axis and threshold to use for splitting bvh node, using surface area heuristics (SAH)
         void choose_split(const BVHNode &node, uint first_sphere, uint after_last_sphere, int &axis, double &threshold);
-
         double calc_sah_cost(uint first_sphere, uint after_last_sphere, int axis, double threshold);
 
         BVHNode *nodes;

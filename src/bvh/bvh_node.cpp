@@ -93,31 +93,31 @@ uint BVHTree::build_subtree(uint tree_depth, uint node_idx, uint first_sphere, u
     }
 }
 
-void BVHTree::choose_split([[maybe_unused]] const BVHNode &node, [[maybe_unused]] uint first_sphere, [[maybe_unused]] uint after_last_sphere, int &axis, double &threshold)
+void BVHTree::choose_split(const BVHNode &node, uint first_sphere, uint after_last_sphere, int &axis, double &threshold)
 {
-    axis = node.box.longest_axis();
-    threshold = node.box.mid_point(axis);
-    // std::cout << "Longest axis is " << axis << " and mid point is " << threshold << std::endl;
-#ifdef SPLIT_USING_SAH
-    // std::cout << "Running SAH on spheres " << first_sphere << "," << after_last_sphere << std::endl;
+    bool found = false;
     double min_cost = std::numeric_limits<double>::infinity();
-    for (int cur_axis = 0; cur_axis < 3; cur_axis++)
+    for (uint i = first_sphere; i < after_last_sphere; i++)
     {
-        for (uint i = first_sphere; i < after_last_sphere; i++)
+        shared_ptr<Sphere> sph = spheres[i];
+        for (int cur_axis = 0; cur_axis < 3; cur_axis++)
         {
-            double cur_threshold = spheres[i]->center[axis];
+            double cur_threshold = spheres[i]->center[cur_axis];
             double cur_cost = calc_sah_cost(first_sphere, after_last_sphere, cur_axis, cur_threshold);
             if (0 < cur_cost && cur_cost < min_cost)
             {
-                // std::cout << "found something" << std::endl;
+                found = true;
                 min_cost = cur_cost;
                 axis = cur_axis;
                 threshold = cur_threshold;
             }
         }
     }
-    // std::cout << "New axis is " << axis << " and threshold is " << threshold << std::endl;
-#endif
+    if (!found)
+    {
+        axis = node.box.longest_axis();
+        threshold = node.box.mid_point(axis);
+    }
 }
 
 double BVHTree::calc_sah_cost(uint first_sphere, uint after_last_sphere, int axis, double threshold)
