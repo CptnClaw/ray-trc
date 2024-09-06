@@ -8,14 +8,14 @@
 
 #define PI              3.1415926535897932385
 #define SCREEN_WIDTH    800
-#define VFOV            (PI / 4)
+#define VFOV            (PI / 9)
 #define ASPECT_RATIO    (4.0 / 3.0)
 
-#define SAMPLES_PER_PIXEL 5
-#define RAY_BOUNCE_LIMIT 10
+#define SAMPLES_PER_PIXEL 10
+#define RAY_BOUNCE_LIMIT 20
 #define TILE_SIZE 4
 
-#define ROTATIONS 1
+#define ROTATIONS 2
 
 int main(int argc, char **argv)
 {
@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     (void)argv; // Mark as unused
     
     // Define camera position
-    Point look_from(13, 2, 13);
+    Point look_from(13, 2, 3);
     Point look_at;
     Vec3 vup(0, 1, 0);
     double lens_cone_angle = PI / 500.0;
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
         result = result && Image::drawPPM(filename.str(), view);
 
         // Rotate and get ready to draw next frame
-        if (ROTATIONS < i)
+        if (i+1 < ROTATIONS)
         {
             std::cout << ROTATIONS - i - 1 << " rotations remaining" << std::endl;
             view.rotate_camera(rotation_cos, rotation_sin);

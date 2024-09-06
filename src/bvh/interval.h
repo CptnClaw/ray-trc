@@ -3,12 +3,6 @@
 
 #include "ray.h"
 
-enum class Set
-{
-    REAL_LINE, // Interval equals the whole set of real numbers, (-\infty, \infty).
-    EMPTY // Interval is an empty set.
-};
-
 class Interval
 {
     public:

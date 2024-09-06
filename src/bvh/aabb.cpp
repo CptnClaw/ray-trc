@@ -9,20 +9,25 @@ AABB::AABB(const Interval &xaxis, const Interval &yaxis, const Interval &zaxis)
 
 bool AABB::hit(const Ray &ray, double tmin, double tmax) const
 {
+    // Prepare variables in cache
     Point origin = ray.origin();
     Vec3 direction_inv = ray.direction_inv();
+
+    // Slab method: Intersect hitting times for all three axes
     Interval hit_t(tmin, tmax);
     for (int axis=0; axis<3; axis++)
     {
+        // Prepare variables in cache
         Interval I = intervals[axis];
         double o = origin[axis];
         double dinv = direction_inv[axis];
 
-        // Intersect full hit interval with the hit times of current axis
+        // Intersect entire hit interval with the hit interval of current axis
         double start_t = (I.start - o) * dinv;
         double end_t = (I.end - o) * dinv;
         if (hit_t.intersect(Interval(start_t, end_t)))
         {
+            // Trivial intersection means ray misses AABB
             return false;
         }
     }
