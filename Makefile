@@ -8,6 +8,8 @@ RELEASE=-g -O3
 
 build: 
 	$(CC) $(WARN) $(SOURCE) $(RELEASE) $(INCLUDE) -o $(OUTPUT)
+sah: 
+	$(CC) $(WARN) $(SOURCE) $(RELEASE) $(INCLUDE) -DSPLIT_USING_SAH -o $(OUTPUT)
 debug: 
 	$(CC) $(WARN) $(SOURCE) $(DEBUG) $(INCLUDE) -o $(OUTPUT)
 clean:

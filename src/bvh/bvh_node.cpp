@@ -26,8 +26,6 @@ bool (*compare_spheres[3])(const shared_ptr<Sphere> &, const shared_ptr<Sphere> 
 
 BVHTree::BVHTree(const std::vector<shared_ptr<Sphere>> &objs) : spheres(objs) 
 {
-    std::cout << "sizeof(BVHNode): " << sizeof(BVHNode) << std::endl;
-    // nodes = static_cast<BVHNode*>(std::aligned_alloc(64, sizeof(BVHNode) * BVH_TREE_SIZE));
     nodes = new BVHNode[BVH_TREE_SIZE];
     uint last_node_idx = build_subtree(0, 0, 0, spheres.size());
     size = last_node_idx + 1;
@@ -70,13 +68,14 @@ uint BVHTree::build_subtree(uint tree_depth, uint node_idx, uint first_sphere, u
         // This is an internal node
         node.num_spheres = 0;
 
-        // Split spheres to two sets according to longest axis
-        int axis = node.box.longest_axis();
+        // Split spheres to two sets and build chid nodes accordingly
+        int axis;
+        double threshold;
+        choose_split(node, first_sphere, after_last_sphere, axis, threshold);
         auto begin_itr = std::begin(spheres) + first_sphere;
         auto end_itr = std::begin(spheres) + after_last_sphere;
         std::sort(begin_itr, end_itr, compare_spheres[axis]);
         uint num_left_spheres = uint(num_spheres * 0.5);
-        float threshold = node.box.mid_point(axis);
         for (uint i = first_sphere+1; i < after_last_sphere; i++)
         {
             double value = spheres[i]->center[axis];
@@ -92,6 +91,56 @@ uint BVHTree::build_subtree(uint tree_depth, uint node_idx, uint first_sphere, u
         node.child_idx = last_node + 1; // depth-first ordering
         return build_subtree(tree_depth + 1, node.child_idx, first_sphere + num_left_spheres, num_spheres - num_left_spheres);
     }
+}
+
+void BVHTree::choose_split([[maybe_unused]] const BVHNode &node, [[maybe_unused]] uint first_sphere, [[maybe_unused]] uint after_last_sphere, int &axis, double &threshold)
+{
+    axis = node.box.longest_axis();
+    threshold = node.box.mid_point(axis);
+    // std::cout << "Longest axis is " << axis << " and mid point is " << threshold << std::endl;
+#ifdef SPLIT_USING_SAH
+    // std::cout << "Running SAH on spheres " << first_sphere << "," << after_last_sphere << std::endl;
+    double min_cost = std::numeric_limits<double>::infinity();
+    for (int cur_axis = 0; cur_axis < 3; cur_axis++)
+    {
+        for (uint i = first_sphere; i < after_last_sphere; i++)
+        {
+            double cur_threshold = spheres[i]->center[axis];
+            double cur_cost = calc_sah_cost(first_sphere, after_last_sphere, cur_axis, cur_threshold);
+            if (0 < cur_cost && cur_cost < min_cost)
+            {
+                // std::cout << "found something" << std::endl;
+                min_cost = cur_cost;
+                axis = cur_axis;
+                threshold = cur_threshold;
+            }
+        }
+    }
+    // std::cout << "New axis is " << axis << " and threshold is " << threshold << std::endl;
+#endif
+}
+
+double BVHTree::calc_sah_cost(uint first_sphere, uint after_last_sphere, int axis, double threshold)
+{
+    int num_spheres_left = 0;
+    int num_spheres_right = 0;
+    AABB box_left, box_right;
+    for (uint i = first_sphere + 1; i < after_last_sphere; i++)
+    {
+        shared_ptr<Sphere> cur_sphere = spheres[i];
+        double value = cur_sphere->center[axis];
+        if (value < threshold)
+        {
+            num_spheres_left++;
+            box_left.enlarge(cur_sphere->bounding());
+        }
+        else
+        {
+            num_spheres_right++;
+            box_right.enlarge(cur_sphere->bounding());
+        }
+    }
+    return num_spheres_left * box_left.surface_area() + num_spheres_right * box_right.surface_area();
 }
 
 bool BVHTree::hit(const Ray &ray, double tmin, HitData &result) const

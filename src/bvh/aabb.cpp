@@ -62,3 +62,11 @@ float AABB::mid_point(int axis) const
 {
     return intervals[axis].mid_point();
 }
+
+double AABB::surface_area() const
+{
+    double len0 = intervals[0].length();
+    double len1 = intervals[1].length();
+    double len2 = intervals[2].length();
+    return (len0 * len1) + (len0 * len2) + (len2 * len1);
+}

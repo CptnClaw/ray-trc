@@ -21,6 +21,10 @@ class AABB
         int longest_axis() const;
         float mid_point(int axis) const;
         
+        // Actually returns HALF of the surface area of the box, 
+        // which is good enough for doing surface area heuristics (SAH) when building a BVH.
+        double surface_area() const;
+        
     private:
         Interval intervals[3];
 };
