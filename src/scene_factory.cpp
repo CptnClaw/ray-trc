@@ -68,8 +68,8 @@ BVHTree* SceneFactory::CreateBookFinalScene(Color &sky_blue)
     auto ground_material = Material::CreateLambertian(Color(0.5, 0.5, 0.5));
     objs.push_back(make_shared<Sphere>(Point(0,-1000,0), 1000, ground_material));
 
-    for (int a = -11; a < 11; a++) {
-        for (int b = -11; b < 11; b++) {
+    for (int a = -25; a < 25; a++) {
+        for (int b = -25; b < 25; b++) {
             auto choose_mat = Random::gen_uniform();
             Point center(a + 0.9*Random::gen_uniform(), 0.2, b + 0.9*Random::gen_uniform());
 
@@ -98,10 +98,10 @@ BVHTree* SceneFactory::CreateBookFinalScene(Color &sky_blue)
     }
 
     auto material1 = Material::CreateGlass(1.5);
-    objs.push_back(make_shared<Sphere>(Point(0, 1, 0), 1.0, material1));
+    objs.push_back(make_shared<Sphere>(Point(0, 1, 0), 1.2, material1));
 
     auto material2 = Material::CreateLambertian(Color(0.4, 0.2, 0.1));
-    objs.push_back(make_shared<Sphere>(Point(-4, 1, 0), 1.0, material2));
+    objs.push_back(make_shared<Sphere>(Point(-4, 1, 0), 1.1, material2));
 
     auto material3 = Material::CreateMetal(Color(0.7, 0.6, 0.5), 0.0);
     objs.push_back(make_shared<Sphere>(Point(4, 1, 0), 1.0, material3));

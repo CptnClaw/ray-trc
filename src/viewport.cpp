@@ -25,6 +25,7 @@ Viewport::Viewport(int screen_width, double aspect_ratio, double vertical_fov,
 void Viewport::update_look_from(Point new_look_from)
 {
     // Set origin of rays and camera orthonormal system
+    look_from = new_look_from;
     camera_center = new_look_from;
     Vec3 viewing_direction = unit(look_at - new_look_from);
     v = unit(vup - dot(vup, viewing_direction) * viewing_direction);

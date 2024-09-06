@@ -11,7 +11,7 @@
 #define MAX_SPHERES_IN_LEAF 10
 
 // Number of nodes in BVH are at most 2^BVH_MAX_DEPTH
-#define BVH_MAX_DEPTH   8
+#define BVH_MAX_DEPTH   10
 #define BVH_TREE_SIZE   1 << BVH_MAX_DEPTH
 
 // Define to split bvh nodes using surface area heuristics.

@@ -11,11 +11,11 @@
 #define VFOV            (PI / 9)
 #define ASPECT_RATIO    (4.0 / 3.0)
 
-#define SAMPLES_PER_PIXEL 10
-#define RAY_BOUNCE_LIMIT 20
+#define SAMPLES_PER_PIXEL 500
+#define RAY_BOUNCE_LIMIT 50
 #define TILE_SIZE 4
 
-#define ROTATIONS 2
+#define ROTATIONS 1
 
 int main(int argc, char **argv)
 {
