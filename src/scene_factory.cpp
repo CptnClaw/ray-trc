@@ -98,10 +98,10 @@ BVHTree* SceneFactory::CreateBookFinalScene(Color &sky_blue)
     }
 
     auto material1 = Material::CreateGlass(1.5);
-    objs.push_back(make_shared<Sphere>(Point(0, 1, 0), 1.2, material1));
+    objs.push_back(make_shared<Sphere>(Point(0, 1, 0), 1.0, material1));
 
     auto material2 = Material::CreateLambertian(Color(0.4, 0.2, 0.1));
-    objs.push_back(make_shared<Sphere>(Point(-4, 1, 0), 1.1, material2));
+    objs.push_back(make_shared<Sphere>(Point(-4, 1, 0), 1.0, material2));
 
     auto material3 = Material::CreateMetal(Color(0.7, 0.6, 0.5), 0.0);
     objs.push_back(make_shared<Sphere>(Point(4, 1, 0), 1.0, material3));

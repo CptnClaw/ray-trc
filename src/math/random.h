@@ -1,9 +1,7 @@
 #ifndef _RANDOM_H_
 #define _RANDOM_H_
 
-#include <cstdlib>
-#include <ctime>
-#include <limits>
+#include "xoshiro256plus.h"
 #include "vec3.h"
 
 class Random
@@ -13,13 +11,18 @@ class Random
         // Call this when the program starts
         inline static void init()
         {
-            std::srand(std::time(0));
+            xoshiro_state[0] = splitmix64_next();
+            xoshiro_state[1] = splitmix64_next();
+            xoshiro_state[2] = splitmix64_next();
+            xoshiro_state[3] = splitmix64_next();
         }
 
         // Returns a random number in U[0, 1)
         inline static double gen_uniform()
         {
-            return double(std::rand()) / RAND_MAX;
+            unsigned long long randint = next();
+            double randdbl = (randint >> 11) * 0x1.0p-53;
+            return randdbl;
         }
 
         // Returns a random number in U[min_val, max_val)

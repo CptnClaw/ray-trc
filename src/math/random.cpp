@@ -1,5 +1,6 @@
 #include "random.h"
 
+uint64_t xoshiro_state[4];
 
 Vec3 Random::gen_uniform_unit_vec()
 {
