@@ -9,8 +9,6 @@ RELEASE=-g -O3
 
 build: 
 	$(CC) $(CSTD) $(WARN) $(SOURCE) $(RELEASE) $(INCLUDE) -o $(OUTPUT)
-sah: 
-	$(CC) $(CSTD) $(WARN) $(SOURCE) $(RELEASE) $(INCLUDE) -DSPLIT_USING_SAH -o $(OUTPUT)
 debug: 
 	$(CC) $(CSTD) $(WARN) $(SOURCE) $(DEBUG) $(INCLUDE) -o $(OUTPUT)
 clean:

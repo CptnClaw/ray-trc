@@ -1,4 +1,7 @@
-#pragma once
+#ifndef _XOSHIRO265PLUS_H_
+#define _XOSHIRO265PLUS_H_
+
+
 /*  Written in 2018 by David Blackman and Sebastiano Vigna (vigna@acm.org)
 
 To the extent possible under law, the author has dedicated all copyright
@@ -60,65 +63,6 @@ static uint64_t next(void) {
 }
 
 
-/* This is the jump function for the generator. It is equivalent
-   to 2^128 calls to next(); it can be used to generate 2^128
-   non-overlapping subsequences for parallel computations. */
-
-// static void jump(void) {
-// 	static const uint64_t JUMP[] = { 0x180ec6d33cfd0aba, 0xd5a61266f0c9392c, 0xa9582618e03fc9aa, 0x39abdc4529b1661c };
-
-// 	uint64_t s0 = 0;
-// 	uint64_t s1 = 0;
-// 	uint64_t s2 = 0;
-// 	uint64_t s3 = 0;
-// 	for(uint64_t i = 0; i < sizeof JUMP / sizeof *JUMP; i++)
-// 		for(int b = 0; b < 64; b++) {
-// 			if (JUMP[i] & UINT64_C(1) << b) {
-// 				s0 ^= xoshiro_state[0];
-// 				s1 ^= xoshiro_state[1];
-// 				s2 ^= xoshiro_state[2];
-// 				s3 ^= xoshiro_state[3];
-// 			}
-// 			next();	
-// 		}
-		
-// 	xoshiro_state[0] = s0;
-// 	xoshiro_state[1] = s1;
-// 	xoshiro_state[2] = s2;
-// 	xoshiro_state[3] = s3;
-// }
-
-
-// /* This is the long-jump function for the generator. It is equivalent to
-//    2^192 calls to next(); it can be used to generate 2^64 starting points,
-//    from each of which jump() will generate 2^64 non-overlapping
-//    subsequences for parallel distributed computations. */
-
-// static void long_jump(void) {
-// 	static const uint64_t LONG_JUMP[] = { 0x76e15d3efefdcbbf, 0xc5004e441c522fb3, 0x77710069854ee241, 0x39109bb02acbe635 };
-
-// 	uint64_t s0 = 0;
-// 	uint64_t s1 = 0;
-// 	uint64_t s2 = 0;
-// 	uint64_t s3 = 0;
-// 	for(uint64_t i = 0; i < sizeof LONG_JUMP / sizeof *LONG_JUMP; i++)
-// 		for(int b = 0; b < 64; b++) {
-// 			if (LONG_JUMP[i] & UINT64_C(1) << b) {
-// 				s0 ^= xoshiro_state[0];
-// 				s1 ^= xoshiro_state[1];
-// 				s2 ^= xoshiro_state[2];
-// 				s3 ^= xoshiro_state[3];
-// 			}
-// 			next();	
-// 		}
-		
-// 	xoshiro_state[0] = s0;
-// 	xoshiro_state[1] = s1;
-// 	xoshiro_state[2] = s2;
-// 	xoshiro_state[3] = s3;
-// }
-
-
 /*  Written in 2015 by Sebastiano Vigna (vigna@acm.org)
 
 To the extent possible under law, the author has dedicated all copyright
@@ -143,12 +87,14 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
    It is a very fast generator passing BigCrush, and it can be useful if
    for some reason you absolutely want 64 bits of state. */
 
-static uint64_t x = std::time(0); // For a new random render each run
-// static uint64_t x = 1; // For reproducible results, stable debug and profiling
+static uint64_t splitmixseed = std::time(0); // For a new random render each run
+// static uint64_t splitmixseed = 1; // For reproducible results, stable debug and profiling
 
 static uint64_t splitmix64_next() {
-	uint64_t z = (x += 0x9e3779b97f4a7c15);
+	uint64_t z = (splitmixseed += 0x9e3779b97f4a7c15);
 	z = (z ^ (z >> 30)) * 0xbf58476d1ce4e5b9;
 	z = (z ^ (z >> 27)) * 0x94d049bb133111eb;
 	return z ^ (z >> 31);
 }
+
+#endif // _XOSHIRO265PLUS_H_
