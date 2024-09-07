@@ -33,6 +33,10 @@ class Random
 
         // Returns a random unit vector, drawn uniformly on the unit sphere
         static Vec3 gen_uniform_unit_vec();
+        
+        // Generate a set of Gaussian distributed random numbers using the Box-Muller algorithm
+        // Due to the nature of the algorithm, size must be even.
+        static void box_muller(double sigma, double **results, int size);
 };
 
 #endif // _RANDOM_H_

@@ -26,11 +26,13 @@ bool (*compare_spheres[3])(const shared_ptr<Sphere> &, const shared_ptr<Sphere> 
 
 BVHTree::BVHTree(const std::vector<shared_ptr<Sphere>> &objs) : spheres(objs) 
 {
+    // Allocate tree and build recursively
     nodes = new BVHNode[BVH_TREE_SIZE];
     uint last_node_idx = build_subtree(0, 0, 0, spheres.size());
     size = last_node_idx + 1;
     std::cout << "BVH Size: " << size << std::endl;
     
+    // Copy sorted spheres to a nice cozy array, unpacking shared_ptr (for memory locality)
     int num_spheres = spheres.size();
     primitives = static_cast<Sphere*>(malloc(sizeof(Sphere) * num_spheres));
     for (int i = 0; i < num_spheres; i++)
@@ -95,12 +97,13 @@ uint BVHTree::build_subtree(uint tree_depth, uint node_idx, uint first_sphere, u
 
 void BVHTree::choose_split(const BVHNode &node, uint first_sphere, uint after_last_sphere, int &axis, double &threshold)
 {
+    // Prepare looking for minimal sah cost
     bool found = false;
     double min_cost = std::numeric_limits<double>::infinity();
+    
+    // Scan all spheres (their centers are the threshold candidates) and all axes
     for (uint i = first_sphere; i < after_last_sphere; i++)
-    {
-        shared_ptr<Sphere> sph = spheres[i];
-        for (int cur_axis = 0; cur_axis < 3; cur_axis++)
+    {for (int cur_axis = 0; cur_axis < 3; cur_axis++)
         {
             double cur_threshold = spheres[i]->center[cur_axis];
             double cur_cost = calc_sah_cost(first_sphere, after_last_sphere, cur_axis, cur_threshold);
@@ -115,6 +118,8 @@ void BVHTree::choose_split(const BVHNode &node, uint first_sphere, uint after_la
     }
     if (!found)
     {
+        // In case process above did not produce any sensible split,
+        // just default to longest axis and mid point
         axis = node.box.longest_axis();
         threshold = node.box.mid_point(axis);
     }
@@ -122,6 +127,7 @@ void BVHTree::choose_split(const BVHNode &node, uint first_sphere, uint after_la
 
 double BVHTree::calc_sah_cost(uint first_sphere, uint after_last_sphere, int axis, double threshold)
 {
+    // Calculate split based on given axis and threshold
     int num_spheres_left = 0;
     int num_spheres_right = 0;
     AABB box_left, box_right;
@@ -131,15 +137,19 @@ double BVHTree::calc_sah_cost(uint first_sphere, uint after_last_sphere, int axi
         double value = cur_sphere->center[axis];
         if (value < threshold)
         {
+            // Put sphere in left box
             num_spheres_left++;
             box_left.enlarge(cur_sphere->bounding());
         }
         else
         {
+            // Put sphere in right box
             num_spheres_right++;
             box_right.enlarge(cur_sphere->bounding());
         }
     }
+    
+    // SAH cost formula
     return num_spheres_left * box_left.surface_area() + num_spheres_right * box_right.surface_area();
 }
 
