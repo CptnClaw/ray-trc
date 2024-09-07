@@ -1,6 +1,19 @@
 # ray-trc
 Ray tracer built over several weekends.
 
+### Features
+- Sphere primitives.
+- Three material types:
+    - Diffuse (Lambertian).
+    - Metal (Reflectance with configurable fuzziness).
+    - Glass (Dielectric).
+- Gaussian subpixel sampling.
+- Acceleration using bounding volume hierarchy (BVH).
+    - Axis-aligned bounding boxes.
+    - Surface area heuristics (SAH).
+- Depth of field blur.
+- Rotation animations.
+
 ### Current progress
 ![Progress thus far](https://raw.githubusercontent.com/CptnClaw/ray-trc/master/orot.png)
 ![Book 1 final](https://raw.githubusercontent.com/CptnClaw/ray-trc/master/final-dof0.png)
