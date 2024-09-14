@@ -7,10 +7,11 @@ Ray tracer built over several weekends.
     - Diffuse (Lambertian).
     - Metal (Reflectance with configurable fuzziness).
     - Glass (Dielectric).
-- Gaussian subpixel sampling.
 - Acceleration using bounding volume hierarchy (BVH).
     - Axis-aligned bounding boxes.
     - Surface area heuristics (SAH).
+    - Tiled ray ordering.
+- Gaussian subpixel sampling.
 - Depth of field blur.
 - Rotation animations.
 

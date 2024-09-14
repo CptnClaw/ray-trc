@@ -39,6 +39,10 @@ BVHTree* SceneFactory::CreateMyScene(Color &sky_blue)
     shared_ptr<Material> bubble = Material::CreateGlass(1.0 / 1.5);
     objs.push_back(make_shared<Sphere>(Point(0, -0.5, -1), 0.25, glass));
     objs.push_back(make_shared<Sphere>(Point(0, -0.5, -1), 0.2, bubble));
+
+    // Glass bubble in back
+    objs.push_back(make_shared<Sphere>(Point(1, 1, -5), 2.3, glass));
+    objs.push_back(make_shared<Sphere>(Point(1, 1, -5), 2.2, bubble));
     
     return new BVHTree(objs);
 }
