@@ -15,9 +15,18 @@ Ray tracer built over several weekends.
 - Depth of field blur.
 - Rotation animations.
 
-### Current progress
-![Progress thus far](https://raw.githubusercontent.com/CptnClaw/ray-trc/master/orot.png)
-![Book 1 final](https://raw.githubusercontent.com/CptnClaw/ray-trc/master/final-dof0.png)
+### Examples
+
+
+
+https://github.com/user-attachments/assets/6ceb065a-6a33-4025-8053-dd8589b7ccb2
+
+
+
+
+https://github.com/user-attachments/assets/55d004d7-633e-475b-a987-b5b275ee353f
+
+
 
 ### Acknowledgements
 This is a learning project for me to experiment with ray tracing and rendering techniques. 
