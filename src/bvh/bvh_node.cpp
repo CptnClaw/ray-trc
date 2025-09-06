@@ -37,7 +37,7 @@ BVHTree::BVHTree(const std::vector<shared_ptr<Sphere>> &objs) : spheres(objs)
     primitives = static_cast<Sphere*>(malloc(sizeof(Sphere) * num_spheres));
     for (int i = 0; i < num_spheres; i++)
     {
-        memcpy(primitives+i, spheres[i].get(), sizeof(Sphere));
+        memcpy((void*)(primitives+i), spheres[i].get(), sizeof(Sphere));
     }
 }
 
