@@ -87,8 +87,8 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
    It is a very fast generator passing BigCrush, and it can be useful if
    for some reason you absolutely want 64 bits of state. */
 
-static uint64_t splitmixseed = std::time(0); // For a new random render each run
-// static uint64_t splitmixseed = 1; // For reproducible results, stable debug and profiling
+// static uint64_t splitmixseed = std::time(0); // For a new random render each run
+static uint64_t splitmixseed = 1; // For reproducible results, stable debug and profiling
 
 static uint64_t splitmix64_next() {
 	uint64_t z = (splitmixseed += 0x9e3779b97f4a7c15);
